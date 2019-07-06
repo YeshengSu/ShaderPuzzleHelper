@@ -1,6 +1,6 @@
 import { IEntries } from '../ShaderPuzzleCompletion';
 
-export var spzeUnifTable: IEntries = {
+export var spzsUnifTable: IEntries = {
     ALPHA_MTL: {description: "ALPHA_MTL",},
     ALPHA_REF: {description: "ALPHA_REF",},
     AMBIENT: {description: "AMBIENT",},

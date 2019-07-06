@@ -1,6 +1,6 @@
 import { IEntries } from '../ShaderPuzzleCompletion';
 
-export var spzeCtrlTable: IEntries = {
+export var spzsCtrlTable: IEntries = {
     vertex: {description: "vertex",},
     pixel: {description: "pixel",},
     out: {description: "out",},
@@ -9,4 +9,7 @@ export var spzeCtrlTable: IEntries = {
     uniform: {description: "uniform",},
     attribute: {description: "attribute",},
     varying: {description: "varying",},
+    default: {description: "default",},
+    true: {description: "true",},
+    false: {description: "false",},
 };

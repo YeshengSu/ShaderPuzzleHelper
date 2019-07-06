@@ -1,6 +1,6 @@
 import { IEntries } from '../ShaderPuzzleCompletion';
 
-export var spzeFuncTable: IEntries = {
+export var spzsFuncTable: IEntries = {
     transpose: {description: "transpose",},
     sample: {description: "sample",},
     samplelod: {description: "samplelod",},

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.spzeCtrlTable = {
+exports.spzsCtrlTable = {
     vertex: { description: "vertex", },
     pixel: { description: "pixel", },
     out: { description: "out", },
@@ -13,4 +13,4 @@ exports.spzeCtrlTable = {
     true: { description: "true", },
     false: { description: "false", },
 };
-//# sourceMappingURL=SpzeCtrlTable.js.map
+//# sourceMappingURL=SpzsCtrlTable.js.map

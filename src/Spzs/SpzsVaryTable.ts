@@ -1,6 +1,6 @@
 import { IEntries } from '../ShaderPuzzleCompletion';
 
-export var spzeVaryTable: IEntries = {
+export var spzsVaryTable: IEntries = {
     DIFFUSE: {description: "DIFFUSE",},
     SPECULAR: {description: "SPECULAR",},
     EMISSIVE: {description: "EMISSIVE",},

@@ -1,6 +1,6 @@
 import { IEntries } from '../ShaderPuzzleCompletion';
 
-export var spzeTagTable: IEntries = {
+export var spzsTagTable: IEntries = {
     color: {description: "color",},
     artist: {description: "artist",},
     init: {description: "init",},

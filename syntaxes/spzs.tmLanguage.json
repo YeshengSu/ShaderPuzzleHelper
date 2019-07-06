@@ -48,7 +48,7 @@
             "patterns": [
                 {
                     "name": "keyword.spzs",
-                    "match": "\\b(function|macro|condition|repeat|vertex|pixel|out|in|branch|uniform|attribute|varying|pipeline)\\b"
+                    "match": "\\b(function|macro|condition|repeat|vertex|pixel|out|in|branch|uniform|attribute|varying|pipeline|default)\\b"
                 }
             ]
         },
@@ -132,6 +132,11 @@
                 {
                     "name": "constant.character.escape.spzs",
                     "match": "\\\\."
+                },
+                {
+                    "name": "constant.numeric.spzs",
+                    "begin": "%",
+                    "end": "%"
                 }
             ]
         },

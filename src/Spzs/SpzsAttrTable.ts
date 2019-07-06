@@ -1,6 +1,6 @@
 import { IEntries } from '../ShaderPuzzleCompletion';
 
-export var spzeAttrTable: IEntries = {
+export var spzsAttrTable: IEntries = {
     POSITION: {description: "POSITION",},
     BLENDWEIGHT: {description: "BLENDWEIGHT",},
     NORMAL: {description: "NORMAL",},

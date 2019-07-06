@@ -1,6 +1,6 @@
 import { IEntries } from '../ShaderPuzzleCompletion';
 
-export var spzeDescTable: IEntries = {
+export var spzsDescTable: IEntries = {
     author: {description: "author",},
     category: {description: "category",},
     company: {description: "company",},

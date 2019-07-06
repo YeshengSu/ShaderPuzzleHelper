@@ -41,6 +41,17 @@
 		],
 		"description": "macro definition"
 	},
+
+	"uniform definition": {
+		"prefix": "uniform def",
+		"body": [
+			"uniform ${1:} ${2:},
+			"<",
+			"	init = \"${3:}\""
+			">;"
+		],
+		"description": "uniform definition"
+	},
 	
 	"macro": {
 		"prefix": "macro",

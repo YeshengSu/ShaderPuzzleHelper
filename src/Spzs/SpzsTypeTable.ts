@@ -1,6 +1,6 @@
 import { IEntries } from '../ShaderPuzzleCompletion';
 
-export var spzeTypeTable: IEntries = {
+export var spzsTypeTable: IEntries = {
     sampler: {description: "sampler",},
     sampler1d: {description: "sampler1d",},
     sampler3d: {description: "sampler3d",},
