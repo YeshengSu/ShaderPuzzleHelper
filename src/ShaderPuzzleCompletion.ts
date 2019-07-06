@@ -18,31 +18,7 @@ export class IEntry {
  export interface IEntries { [name: string]: IEntry; }
 
 export class ShaderPuzzleCompletion{
-	private added: any = {};
-
-	private createNewProposal(kind: CompletionItemKind, name: string, entry: IEntry, type?: string): CompletionItem {
-		var proposal: CompletionItem = new CompletionItem(name);
-		proposal.kind = kind;
-		if (entry) {
-			if (entry.description) {
-				proposal.documentation = entry.description;
-			}
-			if (entry.parameters) {
-				let signature = type ? '(' + type + ') ' : '';
-				signature += name;
-				signature += '(';
-				if (entry.parameters && entry.parameters.length != 0) {
-					let params = '';
-					entry.parameters.forEach(p => params += p.label + ',');
-					signature += params.slice(0, -1);
-				}
-				signature += ')';
-				proposal.detail = signature;
-			}
-		}
-		return proposal;
-	};
-
+	
 	public getSpzsAttributeProvider(){
 		let completionItemProvider = {provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
 			var range = document.getWordRangeAtPosition(position);
