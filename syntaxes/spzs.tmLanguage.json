@@ -1,0 +1,199 @@
+{
+    "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+    "name": "ShaderPuzzle",
+    "repository": {
+        "pipeline_desc": {
+            "begin": "<",
+            "end": ">",
+            "patterns": [
+                {
+                    "name": "keyword.control.spzs",
+                    "match": "\\bauthor\\b|\\bcategory\\b|\\bcompany\\b|\\btechnique\\b|\\bversion\\b|\\bdefer\\b|\\bmipmap\\b|\\bsh\\b|\\binstance\\b|\\bmerge\\b|\\bzenable\\b|\\bzwriteable\\b|\\bcolormask\\b|\\bcull\\b|\\balphablend\\b|\\bsrccolor\\b|\\bsrcalpha\\b|\\bdstalpha\\b|\\bdstcolor\\b|\\brendertarget\\b"
+                },
+                {
+                    "name": "string.quoted.double.spzs",
+                    "begin": "\"",
+                    "end": "\"",
+                    "patterns": [
+                        {
+                            "name": "constant.character.escape.spzs",
+                            "match": "\\\\."
+                        }
+                    ]
+                }
+            ]
+        },
+        "desc_name": {
+            "begin": "<",
+            "end": ">",
+            "patterns": [
+                {
+                    "name": "keyword.control.spzs",
+                    "match": "\\b(color|artist|init|min|max|uigroup|uistep|path|name|export|addressu|addressv|addressw|mip|mag|lodbias|thumbnail|cache|default|customizable|instance)\\b"
+                },
+                {
+                    "name": "string.quoted.double.spzs",
+                    "begin": "\"",
+                    "end": "\"",
+                    "patterns": [
+                        {
+                            "name": "constant.character.escape.spzs",
+                            "match": "\\\\."
+                        }
+                    ]
+                }
+            ]
+        },
+        "pipeline_control_keyword": {
+            "patterns": [
+                {
+                    "name": "keyword.spzs",
+                    "match": "\\b(function|macro|condition|repeat|vertex|pixel|out|in|branch|uniform|attribute|varying|pipeline)\\b"
+                }
+            ]
+        },
+        "var_accuracy_desc": {
+            "patterns": [
+                {
+                    "name": "support.type.spzs",
+                    "match": "\\blowp\\b|\\bhighp\\b|\\bmediump\\b"
+                }
+            ]
+        },
+        "var_type": {
+            "patterns": [
+                {
+                    "name": "support.type.spzs",
+                    "match": "\\bfloat\\b|\\bfloat2\\b|\\bfloat3\\b|\\bfloat4\\b|\\bhalf\\b|\\bhalf2\\b|\\bhalf3\\b|\\bhalf4\\b|\\bint\\b|\\bint2\\b|\\bint3\\b|\\bint4\\b|\\buint\\b|\\buint2\\b|\\buint3\\b|\\buint4\\b|\\bdouble\\b|\\bdouble2\\b|\\bdouble3\\b|\\bdouble4\\b|\\bbool\\b|\\bbool2\\b|\\bbool3\\b|\\bbool4\\b|\\bfloat2x1\\b|\\bfloat2x2\\b|\\bfloat2x3\\b|\\bfloat2x4\\b|\\bfloat3x1\\b|\\bfloat3x2\\b|\\bfloat3x3\\b|\\bfloat3x4\\b|\\bfloat4x1\\b|\\bfloat4x2\\b|\\bfloat4x3\\b|\\bfloat4x4\\b"
+                }
+            ]
+        },
+        "sampler_type": {
+            "patterns": [
+                {
+                    "name": "support.type.spzs",
+                    "match": "\\bsampler\\b|\\bsampler1d\\b|\\bsampler3d\\b|\\bsamplercube\\b|\\bsamplershadow\\b"
+                }
+            ]
+        },
+        "uniform_sampler_sematics": {
+            "patterns": [
+                {
+                    "name": "support.class.spzs",
+                    "match": "\\bDIFFUSE\\b|\\bSPECULAR\\b|\\bEMISSIVE\\b|\\bLIGHTMAP\\b|\\bDIFFUSE_ALPHA\\b|\\bDEPTH\\b|\\bDEPTH_BUFFER\\b|\\bSHADOW\\b|\\bBONE\\b|\\bTRANSMISSION\\b|\\bNORMAL\\b|\\bLIGHTMAPA\\b|\\bLIGHTMAPB\\b|\\bREFLECT\\b|\\bIRRANDIANCE0\\b|\\bIRRANDIANCE1\\b|\\bMASK\\b|\\bMETALLIC\\b|\\bENVIRONMENT\\b|\\bENVIRONMENT_REFLECT\\b|\\bRIM\\b|\\bTERRAIN1\\b|\\bTERRAIN2\\b|\\bTERRAIN3\\b|\\bTERRAIN_BLEND\\b|\\bOTHER0\\b|\\bOTHER1\\b|\\bOTHER2\\b|\\bOTHER3\\b|\\bOTHER4\\b|\\bOTHER5\\b|\\bOTHER6\\b|\\bOTHER7\\b|\\bOTHER8\\b|\\bOTHER9\\b|\\bOTHER10\\b|\\bOTHER11\\b|\\bOTHER12\\b|\\bOTHER13\\b|\\bOTHER14\\b|\\bOTHER15\\b"
+                }
+            ]
+        },
+        "uniform_sematics": {
+            "patterns": [
+                {
+                    "name": "support.class.spzs",
+                    "match": "\\bALPHA_MTL\\b|\\bALPHA_REF\\b|\\bAMBIENT\\b|\\bBLEND_COLOR\\b|\\bBONE_MAP_IDX\\b|\\bBONE_VEC\\b|\\bCAMERA_INFO\\b|\\bCAMERA_POSITION\\b|\\bCAMERA_RATE\\b|\\bCHARACTER_LIGHT_ATTR\\b|\\bCURRENT_RENDER_TARGET\\b|\\bDEFER_AMBIENT\\b|\\bDELTA_FRAME_TIME\\b|\\bDIFFUSE\\b|\\bDIR_LIGHT_ATTR\\b|\\bDIRECT_RGB\\b|\\bEMISSIVE\\b|\\bENV_REFLECT\\b|\\bENV_SH_BLUE\\b|\\bENV_SH_GREEN\\b|\\bENV_SH_RED\\b|\\bENV_EXPOSURE\\b|\\bFOG_COLOR\\b|\\bFOG_ENABLE\\b|\\bFOG_INFO\\b|\\bFRAME_TIME\\b|\\bGI_BUFFER_SIZE\\b|\\bHEIGHT_FOG_DENSITY\\b|\\bWIND\\b|\\bINV_PROJECTION\\b|\\bINV_TEXTURE_TRANS0\\b|\\bINV_TEXTURE_TRANS1\\b|\\bINV_TEXTURE_TRANS2\\b|\\bINV_TEXTURE_TRANS3\\b|\\bINV_TEXTURE_TRANS4\\b|\\bINV_TEXTURE_TRANS5\\b|\\bINV_TEXTURE_TRANS6\\b|\\bINV_TEXTURE_TRANS7\\b|\\bINV_TEXTURE_TRANS8\\b|\\bINV_TEXTURE_TRANS9\\b|\\bINV_TEXTURE_TRANS10\\b|\\bINV_TEXTURE_TRANS11\\b|\\bINV_TEXTURE_TRANS12\\b|\\bINV_TEXTURE_TRANS13\\b|\\bINV_TEXTURE_TRANS14\\b|\\bINV_TEXTURE_TRANS15\\b|\\bINV_VIEW\\b|\\bINV_VIEW_PROJECTION\\b|\\bINV_WORLD\\b|\\bINV_WORLD_VIEW\\b|\\bINV_WORLD_VIEW_PROJECTION\\b|\\bLIGHT_BUFFER\\b|\\bLIGHT_BUFFER2\\b|\\bLIGHT_DIRECTION\\b|\\bLIGHT_MAP_SCALE\\b|\\bLIGHT_NUM\\b|\\bLIGHT_POSITION\\b|\\bLIGHT_VIEW_PROJ\\b|\\bLIGHTMAP_TINT_COLOR\\b|\\bLIGHTMAP_TINT_FACTOR\\b|\\bMODEL_INFO_COLOR\\b|\\bMODEL_INFO_NORMAL\\b|\\bMODEL_INFO_POS\\b|\\bNORMAL_MATRIX\\b|\\bOTHER0\\b|\\bOTHER1\\b|\\bOTHER2\\b|\\bOTHER3\\b|\\bOTHER4\\b|\\bOTHER5\\b|\\bOTHER6\\b|\\bOTHER7\\b|\\bOTHER8\\b|\\bOTHER9\\b|\\bOTHER10\\b|\\bOTHER11\\b|\\bOTHER12\\b|\\bOTHER13\\b|\\bOTHER14\\b|\\bOTHER15\\b|\\bOTHER16\\b|\\bOTHER17\\b|\\bOTHER18\\b|\\bOTHER19\\b|\\bOTHER20\\b|\\bOTHER21\\b|\\bOTHER22\\b|\\bOTHER23\\b|\\bOTHER24\\b|\\bOTHER25\\b|\\bOTHER26\\b|\\bOTHER27\\b|\\bOTHER28\\b|\\bOTHER29\\b|\\bOTHER30\\b|\\bOTHER31\\b|\\bOTHER32\\b|\\bOTHER33\\b|\\bOTHER34\\b|\\bOTHER35\\b|\\bOTHER36\\b|\\bOTHER37\\b|\\bOTHER38\\b|\\bOTHER39\\b|\\bOTHER40\\b|\\bOTHER41\\b|\\bOTHER42\\b|\\bOTHER43\\b|\\bOTHER44\\b|\\bOTHER45\\b|\\bOTHER46\\b|\\bOTHER47\\b|\\bOTHER48\\b|\\bOTHER49\\b|\\bOTHER50\\b|\\bOTHER51\\b|\\bOTHER52\\b|\\bOTHER53\\b|\\bOTHER54\\b|\\bOTHER55\\b|\\bOTHER56\\b|\\bOTHER57\\b|\\bOTHER58\\b|\\bOTHER59\\b|\\bOTHER60\\b|\\bOTHER61\\b|\\bOTHER62\\b|\\bOTHER63\\b|\\bPER_SCN_INFO\\b|\\bPLANET_POS\\b|\\bPOINT_LIGHT_ATTR\\b|\\bPROJECTION\\b|\\bREFLECT_WVP\\b|\\bREFLECT_ROT\\b|\\bRNM_WEIGH\\b|\\bSH_ATTR\\b|\\bSHADOW_BLEND_ALL\\b|\\bSHADOW_INFO\\b|\\bSHADOW_LIGHT_ATTR\\b|\\bSPECULAR\\b|\\bSPECULAR_POWER\\b|\\bSTATIC_AMBIENT\\b|\\bSTATIC_ENV\\b|\\bTERRAIN_DEFAULT\\b|\\bTERRAIN_TRANSFORM\\b|\\bTEXTURE_TRANS0\\b|\\bTEXTURE_TRANS1\\b|\\bTEXTURE_TRANS2\\b|\\bTEXTURE_TRANS3\\b|\\bTEXTURE_TRANS4\\b|\\bTEXTURE_TRANS5\\b|\\bTEXTURE_TRANS6\\b|\\bTEXTURE_TRANS7\\b|\\bTEXTURE_TRANS8\\b|\\bTEXTURE_TRANS9\\b|\\bTEXTURE_TRANS10\\b|\\bTEXTURE_TRANS11\\b|\\bTEXTURE_TRANS12\\b|\\bTEXTURE_TRANS13\\b|\\bTEXTURE_TRANS14\\b|\\bTEXTURE_TRANS15\\b|\\bTFACTOR\\b|\\bTRANSMISSION_INFO\\b|\\bVIEW\\b|\\bVIEW_PROJECTION\\b|\\bVIEWPORT_SIZE\\b|\\bVIEWPORT_TRANSFORM\\b|\\bWATER_OFFSET\\b|\\bWORLD\\b|\\bWORLD_VIEW\\b|\\bWORLD_VIEW_PROJECTION\\b"
+                }
+            ]
+        },
+        "varying_sematics": {
+            "patterns": [
+                {
+                    "name": "support.class.spzs",
+                    "match": "\\bVIEWPORT_SIZE\\b|\\TANGENT\\b|\\POSITION\\b|\\bDIFFUSE\\b|\\bSPECULAR\\b|\\bEMISSIVE\\b|\\bFOG\\b|\\bLIGHTING\\b|\\bTEXTURE0\\b|\\bTEXTURE1\\b|\\bTEXTURE2\\b|\\bTEXTURE3\\b|\\bTEXTURE4\\b|\\bTEXTURE5\\b|\\bTEXTURE6\\b|\\bTEXTURE7\\b|\\bTEXTURE8\\b|\\bTEXTURE9\\b|\\bTEXTURE10\\b|\\bTEXTURE11\\b|\\bTEXTURE12\\b|\\bTEXTURE13\\b|\\bTEXTURE14\\b|\\bTEXTURE15\\b|\\bTEXTURE_RAW0\\b|\\bTEXTURE_RAW1\\b|\\bTEXTURE_RAW2\\b|\\bTEXTURE_RAW3\\b|\\bTEXTURE_RAW4\\b|\\bTEXTURE_RAW5\\b|\\bTEXTURE_RAW6\\b|\\bTEXTURE_RAW7\\b|\\bTEXTURE_RAW8\\b|\\bTEXTURE_RAW9\\b|\\bTEXTURE_RAW10\\b|\\bTEXTURE_RAW11\\b|\\bTEXTURE_RAW12\\b|\\bTEXTURE_RAW13\\b|\\bTEXTURE_RAW14\\b|\\bTEXTURE_RAW15\\b|\\bWORLD_POSITION\\b|\\bWORLD_NORMAL\\b|\\bWORLD_TANGENT\\b|\\bWORLD_BINORMAL\\b|\\bWINDOW_POSITION\\b"
+                }
+            ]
+        },
+        "intrinsic_func": {
+            "patterns": [
+                {
+                    "name": "support.function.spzs",
+                    "match": "\\btranspose\\b|\\bsample\\b|\\bsamplelod\\b|\\btransform\\b|\\babs\\b|\\bacos\\b|\\basin\\b|\\batan\\b|\\bceil\\b|\\bcos\\b|\\bexp\\b|\\bexp2\\b|\\bfloor\\b|\\bfractional\\b|\\blength\\b|\\blog\\b|\\blog2\\b|\\bnegative\\b|\\bnormalize\\b|\\boneminus\\b|\\brsqrt\\b|\\bsaturate\\b|\\bsign\\b|\\bsin\\b|\\bsqrt\\b|\\batan2\\b|\\bdot\\b|\\bcross\\b|\\bfmod\\b|\\bmin\\b|\\bmax\\b|\\bpow\\b|\\breflect\\b|\\bstep\\b|\\blerp\\b|\\bclamp\\b|\\brefract\\b|\\bsmoothstep\\b"
+                }
+            ]
+        },
+        "const_name": {
+            "patterns": [
+                {
+                    "name": "constant.numeric.spzs",
+                    "match": "\\b[0-9]+[0-9.]+[0-9f]*\\b|\\b[0-9]\\b"
+                }
+            ]
+        },
+        "operator_name": {
+            "patterns": [
+                {
+                    "name": "keyword.operator.spzs",
+                    "match": ""
+                }
+            ]
+        },
+        "strings": {
+            "name": "string.quoted.double.spzs",
+            "begin": "\"",
+            "end": "\"",
+            "patterns": [
+                {
+                    "name": "constant.character.escape.spzs",
+                    "match": "\\\\."
+                }
+            ]
+        },
+        "comment1": {
+            "name": "comment.spzs",
+            "begin": "/[*]",
+            "end": "[*]/"
+        },
+        "comment2": {
+            "name": "comment.spzs",
+            "begin": "//",
+            "end": "\n"
+        }
+    },
+    "foldingStartMarker": "/**|{s*|<*$",
+    "foldingStopMarker": "**/|^s*}|*>",
+    "patterns": [
+        {
+            "include": "#pipeline_desc"
+        },
+        {
+            "include": "#desc_name"
+        },
+        {
+            "include": "#pipeline_control_keyword"
+        },
+        {
+            "include": "#var_accuracy_desc"
+        },
+        {
+            "include": "#var_type"
+        },
+        {
+            "include": "#sampler_type"
+        },
+        {
+            "include": "#uniform_sampler_sematics"
+        },
+        {
+            "include": "#uniform_sematics"
+        },
+        {
+            "include": "#varying_sematics"
+        },
+        {
+            "include": "#intrinsic_func"
+        },
+        {
+            "include": "#const_name"
+        },
+        {
+            "include": "#operator_name"
+        },
+        {
+            "include": "#strings"
+        },
+        {
+            "include": "#comment1"
+        },
+        {
+            "include": "#comment2"
+        }
+    ],
+    "scopeName": "source.spzs"
+}

@@ -1,0 +1,96 @@
+{
+	"repeat loop": {
+		"prefix": "repeat",
+		"body": [
+			"repeat(${1}) out(float ${2:var}) operator(+) loop(${3:4}){",
+			"	",
+			"	default {",
+			"	",
+			"		out(${2:var}, );",
+			"	}",
+			"};"
+		],
+		"description": "loop"
+    },
+    
+    "condition": {
+		"prefix": "condition",
+		"body": [
+			"condition(${1}) out(float ${2:var})",
+			"{",
+			"	branch (\"${3:}\"){",
+			"	",
+			"		out(${2:var}, );",
+			"	}",
+			"	default {",
+			"	",
+			"		out(${2:var}, );",
+			"	}",
+			"};"
+		],
+		"description": "condition"
+	},
+
+	"macro definition": {
+		"prefix": "macro def",
+		"body": [
+			"macro(\"${1:}\")",
+			"<",
+			"	",
+			">;"
+		],
+		"description": "macro definition"
+	},
+	
+	"macro": {
+		"prefix": "macro",
+		"body": [
+			"macro(\"${1:}\") out(float ${2:var}) {",
+			"	",
+			"	branch (\"${3:}\") {",
+			"	",
+			"		out(${2:var}, );",
+			"	}",
+			"};"
+		],
+		"description": "macro"
+	},
+
+	"function": {
+		"prefix": "function",
+		"body": [
+			"function ${1} in(float ${2:parm}) out(float ${3:output}) {",
+			"	",
+			"	out(${3:output}, ${2:parm});",
+			"};"
+		],
+		"description": "function"
+	},
+
+	"pipeline": {
+		"prefix": "pipeline",
+		"body": [
+			"pipeline",
+			"<",
+			"	version = \"1.0.0\"",
+			"	author = \"\"",
+			"	company = \"Netease\"",
+			"	technique = \"TShader\"",
+			">",
+			"{",
+			"	vertex {",
+			"		",
+			"		float4 finalPos = float4(0.0f, 0.0f, 0.0f, 1.0f);",	
+			"		vertex(screen_pos);",
+			"	}",
+			"	pixel {",
+			"		",
+			"		float4 finalColor = float4(1.0f, 1.0f, 1.0f, 1.0f);",
+			"		pixel(finalColor);",		
+			"	}",
+			"}"
+		],
+		"description": "pipeline"
+	},
+	
+}

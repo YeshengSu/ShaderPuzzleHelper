@@ -1,0 +1,131 @@
+{
+	"name": "shaderpuzzlehelper",
+	"displayName": "ShaderPuzzleHelper",
+	"description": "shader puzzle tool ",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.36.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onLanguage:spzs"
+	],
+	"main": "./out/Extension.js",
+	"contributes": {
+		"languages": [
+			{
+				"id": "spzs",
+				"aliases": [
+					"ShaderPuzzle",
+					"spzs"
+				],
+				"extensions": [
+					".spzs"
+				],
+				"configuration": "./syntaxes/language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "spzs",
+				"scopeName": "source.spzs",
+				"path": "./syntaxes/spzs.tmLanguage.json"
+			}
+		],
+		"commands": [
+			{
+				"command": "extension.StartShaderPuzzleTool",
+				"title": "Shader Puzzle Tool Activated"
+			},
+			{
+				"command": "extension.GetCurrentFilePath",
+				"title": "Get Current File Path"
+			},
+			{
+				"command": "extension.OpenShaderPuzzleWeb",
+				"title": "Shader Puzzle Web"
+			}
+		],
+		"keybindings": [
+			{
+				"command": "extension.StartShaderPuzzleTool",
+				"key": "ctrl+f10",
+				"mac": "cmd+f10",
+				"when": "editorTextFocus"
+			}
+		],
+		"menus": {
+			"editor/context": [
+				{
+					"when": "editorFocus",
+					"command": "extension.GetCurrentFilePath",
+					"group": "navigation"
+				}
+			],
+			"explorer/context": [
+				{
+					"command": "extension.GetCurrentFilePath",
+					"group": "navigation"
+				}
+			],
+			"editor/title": [
+				{
+					"command": "extension.OpenShaderPuzzleWeb",
+					"group": "navigation"
+				}
+			]
+		},
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "shaderLab",
+					"title": "shader lab",
+					"icon": "images/tool-light.svg"
+				}
+			]
+		},
+		"views": {
+			"shaderLab": [
+				{
+					"id": "Attribute",
+					"name": "Sys_Attribute"
+				},
+				{
+					"id": "Uniform",
+					"name": "Sys_Uniform"
+				},
+				{
+					"id": "Varying",
+					"name": "Sys_Varying"
+				},
+				{
+					"id": "Function",
+					"name": "Sys_Function"
+				}
+			]
+		},
+		"snippets": [
+			{
+				"language": "spzs",
+				"path": "./snippets/ShaderPuzzle.json"
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"lint": "tslint -p ./",
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"test": "npm run compile && node ./node_modules/vscode/bin/test"
+	},
+	"devDependencies": {
+		"typescript": "^3.3.1",
+		"vscode": "^1.1.28",
+		"tslint": "^5.12.1",
+		"@types/node": "^10.12.21",
+		"@types/mocha": "^2.2.42"
+	}
+}
