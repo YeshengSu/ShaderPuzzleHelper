@@ -11,23 +11,6 @@
                     "match": "\\bauthor\\b|\\bcategory\\b|\\bcompany\\b|\\btechnique\\b|\\bversion\\b|\\bdefer\\b|\\bmipmap\\b|\\bsh\\b|\\binstance\\b|\\bmerge\\b|\\bzenable\\b|\\bzwriteable\\b|\\bcolormask\\b|\\bcull\\b|\\balphablend\\b|\\bsrccolor\\b|\\bsrcalpha\\b|\\bdstalpha\\b|\\bdstcolor\\b|\\brendertarget\\b"
                 },
                 {
-                    "name": "string.quoted.double.spzs",
-                    "begin": "\"",
-                    "end": "\"",
-                    "patterns": [
-                        {
-                            "name": "constant.character.escape.spzs",
-                            "match": "\\\\."
-                        }
-                    ]
-                }
-            ]
-        },
-        "desc_name": {
-            "begin": "<",
-            "end": ">",
-            "patterns": [
-                {
                     "name": "keyword.control.spzs",
                     "match": "\\b(color|artist|init|min|max|uigroup|uistep|path|name|export|addressu|addressv|addressw|mip|mag|lodbias|thumbnail|cache|default|customizable|instance)\\b"
                 },
@@ -48,7 +31,7 @@
             "patterns": [
                 {
                     "name": "keyword.spzs",
-                    "match": "\\b(function|macro|condition|repeat|vertex|pixel|out|in|branch|uniform|attribute|varying|pipeline|default)\\b"
+                    "match": "\\b(function|macro|condition|repeat|vertex|pixel|out|in|branch|uniform|attribute|varying|pipeline|default|true|false)\\b"
                 }
             ]
         },
@@ -156,9 +139,6 @@
     "patterns": [
         {
             "include": "#pipeline_desc"
-        },
-        {
-            "include": "#desc_name"
         },
         {
             "include": "#pipeline_control_keyword"

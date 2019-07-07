@@ -23,7 +23,9 @@ export class ShaderPuzzleCompletion{
 		let completionItemProvider = {provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
 			var range = document.getWordRangeAtPosition(position);
 			var prefix = range ? document.getText(range) : '';
-
+			
+			console.log(123);
+			// create provider item function
 			let result: CompletionItem[] = [];
 			var createNewProposal = function (kind: CompletionItemKind, name: string, entry: IEntry, type?: string): CompletionItem {
 				var proposal: CompletionItem = new CompletionItem(name);
@@ -51,35 +53,24 @@ export class ShaderPuzzleCompletion{
 			var matches = (name: string) => {
 				return prefix.length === 0 || name.length >= prefix.length && name.substr(0, prefix.length) === prefix;
 			};
-
-			for (var name in spzsAttrTable) {
+			// do with in angle bracket
+			for (var name in spzsTagTable) {
 				if (matches(name)){
-					result.push(createNewProposal(CompletionItemKind.Property, name, spzsAttrTable[name], 'attribute'));
+					result.push(createNewProposal(CompletionItemKind.Keyword, name, spzsTagTable[name], 'Tag'));
 				}
-			}
-			for (var name in spzsCtrlTable) {
-				if (matches(name)){
-					result.push(createNewProposal(CompletionItemKind.Field, name, spzsCtrlTable[name], 'PipelineControl'));
-				}
+				
 			}
 			for (var name in spzsDescTable) {
 				if (matches(name)){
 					result.push(createNewProposal(CompletionItemKind.Keyword, name, spzsDescTable[name], 'Describe'));
 				}
 			}
-			for (var name in spzsFuncTable) {
+			
+
+			// do within angle braket
+			for (var name in spzsAttrTable) {
 				if (matches(name)){
-					result.push(createNewProposal(CompletionItemKind.Function, name, spzsFuncTable[name], 'IntrinsicFunction'));
-				}
-			}
-			for (var name in spzsTagTable) {
-				if (matches(name)){
-					result.push(createNewProposal(CompletionItemKind.Keyword, name, spzsTagTable[name], 'Tag'));
-				}
-			}
-			for (var name in spzsTypeTable) {
-				if (matches(name)){
-					result.push(createNewProposal(CompletionItemKind.TypeParameter, name, spzsTypeTable[name], 'DataType'));
+					result.push(createNewProposal(CompletionItemKind.Property, name, spzsAttrTable[name], 'attribute'));
 				}
 			}
 			for (var name in spzsUnifTable) {
@@ -90,6 +81,23 @@ export class ShaderPuzzleCompletion{
 			for (var name in spzsVaryTable) {
 				if (matches(name)){
 					result.push(createNewProposal(CompletionItemKind.Property, name, spzsVaryTable[name], 'Varying'));
+				}
+			}
+			for (var name in spzsFuncTable) {
+				if (matches(name)){
+					result.push(createNewProposal(CompletionItemKind.Function, name, spzsFuncTable[name], 'IntrinsicFunction'));
+				}
+			}
+			for (var name in spzsTypeTable) {
+				if (matches(name)){
+					result.push(createNewProposal(CompletionItemKind.TypeParameter, name, spzsTypeTable[name], 'DataType'));
+				}
+			}
+
+
+			for (var name in spzsCtrlTable) {
+				if (matches(name)){
+					result.push(createNewProposal(CompletionItemKind.Field, name, spzsCtrlTable[name], 'PipelineControl'));
 				}
 			}
 			
