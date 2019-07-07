@@ -23,8 +23,7 @@ export class ShaderPuzzleCompletion{
 		let completionItemProvider = {provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
 			var range = document.getWordRangeAtPosition(position);
 			var prefix = range ? document.getText(range) : '';
-			
-			console.log(123);
+
 			// create provider item function
 			let result: CompletionItem[] = [];
 			var createNewProposal = function (kind: CompletionItemKind, name: string, entry: IEntry, type?: string): CompletionItem {
