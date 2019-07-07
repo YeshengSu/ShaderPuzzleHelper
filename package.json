@@ -46,6 +46,10 @@
 			{
 				"command": "extension.OpenShaderPuzzleWeb",
 				"title": "Shader Puzzle Web"
+			},
+			{
+				"command": "extension.GlobalView.reveal",
+				"title": "Global View: Reveal"
 			}
 		],
 		"keybindings": [
@@ -89,20 +93,12 @@
 		"views": {
 			"shaderLab": [
 				{
-					"id": "Attribute",
-					"name": "Sys_Attribute"
+					"id": "GlobalView",
+					"name": "Global Proporties"
 				},
 				{
-					"id": "Uniform",
-					"name": "Sys_Uniform"
-				},
-				{
-					"id": "Varying",
-					"name": "Sys_Varying"
-				},
-				{
-					"id": "Function",
-					"name": "Sys_Function"
+					"id": "LocalView",
+					"name": "Uniform Proporties"
 				}
 			]
 		},
