@@ -59,6 +59,14 @@
                 }
             ]
         },
+        "attribute_sematics": {
+            "patterns": [
+                {
+                    "name": "support.class.spzs",
+                    "match": "\\bPOSITION\\b|\\BLENDWEIGHT\\b|\\NORMAL\\b|\\bDIFFUSE\\b|\\bSPECULAR\\b|\\bEMISSIVE\\b|\\bFOG\\b|\\bBLENDINDICES\\b|\\bTANGENT\\b|\\bBINORMAL\\b|\\bPOSITIONT\\b"
+                }
+            ]
+        },
         "uniform_sampler_sematics": {
             "patterns": [
                 {
@@ -151,6 +159,9 @@
         },
         {
             "include": "#sampler_type"
+        },
+        {
+            "include": "#attribute_sematics"
         },
         {
             "include": "#uniform_sampler_sematics"

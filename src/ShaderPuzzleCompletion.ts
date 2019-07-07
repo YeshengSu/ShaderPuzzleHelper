@@ -23,7 +23,28 @@ export class ShaderPuzzleCompletion{
 		let completionItemProvider = {provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
 			var range = document.getWordRangeAtPosition(position);
 			var prefix = range ? document.getText(range) : '';
-
+			
+			let leftbracket = '>'
+			let rightbracket = '<'
+			let i
+			for(i = position.line-1; i >= 0; i--){
+				if (document.lineAt(i).text.includes('<')){
+					leftbracket = '<'; break;
+				}
+				if (document.lineAt(i).text.includes('>')){
+					leftbracket = '>'; break;
+				}
+			}
+			for(i = position.line+1; i < document.lineCount; i++){
+				if (document.lineAt(i).text.includes('<')){
+					rightbracket = '<'; break;
+				}
+				if (document.lineAt(i).text.includes('>')){
+					rightbracket = '>'; break;
+				}
+			}
+			let isWithinAngleBracket = leftbracket == '<' && rightbracket == '>';
+			
 			// create provider item function
 			let result: CompletionItem[] = [];
 			var createNewProposal = function (kind: CompletionItemKind, name: string, entry: IEntry, type?: string): CompletionItem {
@@ -53,43 +74,47 @@ export class ShaderPuzzleCompletion{
 				return prefix.length === 0 || name.length >= prefix.length && name.substr(0, prefix.length) === prefix;
 			};
 			// do with in angle bracket
-			for (var name in spzsTagTable) {
-				if (matches(name)){
-					result.push(createNewProposal(CompletionItemKind.Keyword, name, spzsTagTable[name], 'Tag'));
+			if (isWithinAngleBracket){
+				for (var name in spzsTagTable) {
+					if (matches(name)){
+						result.push(createNewProposal(CompletionItemKind.Keyword, name, spzsTagTable[name], 'Tag'));
+					}
+
 				}
-				
-			}
-			for (var name in spzsDescTable) {
-				if (matches(name)){
-					result.push(createNewProposal(CompletionItemKind.Keyword, name, spzsDescTable[name], 'Describe'));
+				for (var name in spzsDescTable) {
+					if (matches(name)){
+						result.push(createNewProposal(CompletionItemKind.Keyword, name, spzsDescTable[name], 'Describe'));
+					}
 				}
 			}
 			
 
 			// do within angle braket
-			for (var name in spzsAttrTable) {
-				if (matches(name)){
-					result.push(createNewProposal(CompletionItemKind.Property, name, spzsAttrTable[name], 'attribute'));
+			if (!isWithinAngleBracket){
+				for (var name in spzsAttrTable) {
+					if (matches(name)){
+						result.push(createNewProposal(CompletionItemKind.Property, name, spzsAttrTable[name], 'attribute'));
+					}
 				}
-			}
-			for (var name in spzsUnifTable) {
-				if (matches(name)){
-					result.push(createNewProposal(CompletionItemKind.Property, name, spzsUnifTable[name], 'Uniform'));
+				for (var name in spzsUnifTable) {
+					if (matches(name)){
+						result.push(createNewProposal(CompletionItemKind.Property, name, spzsUnifTable[name], 'Uniform'));
+					}
 				}
-			}
-			for (var name in spzsVaryTable) {
-				if (matches(name)){
-					result.push(createNewProposal(CompletionItemKind.Property, name, spzsVaryTable[name], 'Varying'));
+				for (var name in spzsVaryTable) {
+					if (matches(name)){
+						result.push(createNewProposal(CompletionItemKind.Property, name, spzsVaryTable[name], 'Varying'));
+					}
 				}
-			}
-			for (var name in spzsFuncTable) {
-				if (matches(name)){
-					result.push(createNewProposal(CompletionItemKind.Function, name, spzsFuncTable[name], 'IntrinsicFunction'));
+				for (var name in spzsFuncTable) {
+					if (matches(name)){
+						result.push(createNewProposal(CompletionItemKind.Function, name, spzsFuncTable[name], 'IntrinsicFunction'));
+					}
 				}
-			}
-			for (var name in spzsTypeTable) {
-				if (matches(name)){
-					result.push(createNewProposal(CompletionItemKind.TypeParameter, name, spzsTypeTable[name], 'DataType'));
+				for (var name in spzsTypeTable) {
+					if (matches(name)){
+						result.push(createNewProposal(CompletionItemKind.TypeParameter, name, spzsTypeTable[name], 'DataType'));
+					}
 				}
 			}
 
