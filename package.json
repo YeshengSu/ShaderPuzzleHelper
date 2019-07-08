@@ -48,8 +48,8 @@
 				"title": "Shader Puzzle Web"
 			},
 			{
-				"command": "extension.GlobalView.reveal",
-				"title": "Global View: Reveal"
+				"command": "extension.GlobalView.refreshTree",
+				"title": "Global View: Refresh Tree"
 			}
 		],
 		"keybindings": [

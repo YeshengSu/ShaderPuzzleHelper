@@ -1,27 +1,21 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { stringify } from 'querystring';
-import {spzsTypeTable} from './Spzs/SpzsTypeTable'
-import {spzsCtrlTable} from './Spzs/SpzsCtrlTable'
+import {spzsTypeTable} from './Spzs/SpzsTypeTable';
+import {spzsCtrlTable} from './Spzs/SpzsCtrlTable';
 
 export class CreateViews {
 	constructor(context: vscode.ExtensionContext) {
 		var globalViewDataProvider = new GlobalViewDataProvider();
 		const view = vscode.window.createTreeView('GlobalView', { treeDataProvider: globalViewDataProvider, showCollapseAll: true });
-		vscode.commands.registerCommand('extension.GlobalView.reveal', async () => {
-			globalViewDataProvider.refreshTree();
-			// const key = await vscode.window.showInputBox({ placeHolder: 'Type the label of the item to reveal' });
-			// if (key) {
-				// await view.reveal(key , { focus: true, select: false, expand: true });
-			// }
-		});
+		vscode.commands.registerCommand('extension.GlobalView.refreshTree', async () => {globalViewDataProvider.refreshTree();});
 		vscode.commands.registerCommand('extension.GlobalView.Selection', (line:number, length:number) => globalViewDataProvider.SelectItem(line, length));
 	}
 }
 
 // tree item for global proporties views
 export class ContentItem{
-	constructor(public type:string, public proporty:string, public lineText:string, public lineNum:number){
+	constructor(public type:string, public proporty:string, public lineText:string, public lineNum:number, public lineRawText:string){
 
 	}
 }
@@ -45,15 +39,14 @@ export class ContentManager{
 
 	public GetLineData(line: string):ContentItem
 	{
-		return (this.lineData as any)[line]
+		return (this.lineData as any)[line];
 	}
 
 	public ResetData()
 	{
-		this.lineData = {}
+		this.lineData = {};
 		this.data_type.forEach((element) => {
 			(this.treeData as any)[element] = {};
-			spzsTypeTable
 		});
 	}
 
@@ -61,21 +54,25 @@ export class ContentManager{
 	public UpdateContent()
 	{	
 		let getProporty = function(type:string, line: string, nextLine: string){
-			if (type == 'function')
+			if (type === 'function')
 			{
-				let words1 = line.split('(')[0]
-				let words2 = line.split('(')[0]
-				if (words1.includes(' in') || words2.includes(' in'))
+				let words1 = line.split('(')[0];
+				let words2 = line.split('(')[0];
+				if (words1.includes(' in') || words2.includes(' in')) {
 					return line.split(' ', 3)[1];
-				else
+				}
+				else {
 					return null;
+				}
 			}
-			else if (type == 'macro')
+			else if (type === 'macro')
 			{
-				if (line.includes(' out') || nextLine.includes(' out'))
+				if (line.includes(' out') || nextLine.includes(' out')) {
 					return null;
-				else
-					return line.replace('macro', '').replace(' ', '').replace('(', '').replace(')', '')
+				}
+				else {
+					return line.replace('macro', '').replace(' ', '').replace('(', '').replace(')', '');
+				}
 			}
 			else
 			{
@@ -83,14 +80,14 @@ export class ContentManager{
 				for (var i = 0; i < words.length; i++){
 					if (!spzsTypeTable.hasOwnProperty(words[i]) && 
 						!spzsCtrlTable.hasOwnProperty(words[i]) &&
-						!words[i].includes('['))
+						!words[i].includes('[') && words[i].length)
 					{
 						return words[i].split(':')[0].replace(';', '');
 					}
 				}
 			}
 			return null;
-		}
+		};
 
 		this.ResetData();
 
@@ -108,8 +105,9 @@ export class ContentManager{
 						let nextLine = document.lineAt(i+1);
 						let nextText = nextLine.text.substr(line.firstNonWhitespaceCharacterIndex, nextLine.text.length);
 						let proporty = getProporty(str_type, text, nextText);
+						// tslint:disable-next-line: triple-equals
 						if (proporty != null){
-							(this.lineData as any)[i.toString()] = new ContentItem(str_type, proporty, text, i);
+							(this.lineData as any)[i.toString()] = new ContentItem(str_type, proporty, text, i, line.text);
 							(newTreeData as any)[i.toString()] = {};
 						}
 					}
@@ -133,15 +131,16 @@ export class GlobalViewDataProvider implements vscode.TreeDataProvider<string>{
 
 	public refreshTree(): void {
 		console.log("refresh");
+		this.contentMgr.UpdateContent();
 		this._onDidChangeTreeData.fire();
 	}
 
 	public SelectItem(line:number, length: number){
-		console.log(line);
 		let editor = vscode.window.activeTextEditor;
 		if (editor && editor.document)
 		{
-			vscode.window.showTextDocument(editor.document, line);
+			let newRange = new vscode.Range(new vscode.Position(line,0 ), new vscode.Position(line,length));
+			editor.revealRange(newRange, vscode.TextEditorRevealType.InCenterIfOutsideViewport);
 			editor.selection = new vscode.Selection(new vscode.Position(line,0 ), new vscode.Position(line,length));
 		}
 	}
@@ -167,8 +166,8 @@ export class GlobalViewDataProvider implements vscode.TreeDataProvider<string>{
 			let command = {
 				command: 'extension.GlobalView.Selection',
 				title:'',
-				arguments: [lineNum, content.length-1]
-			}
+				arguments: [lineNum, lineData.lineRawText.length-1]
+			};
 			return new GlobalViewTreeItem(lineNum, label, content, collapsible, type, command);
 		}
 	}
