@@ -1,82 +1,200 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { stringify } from 'querystring';
+import {spzsTypeTable} from './Spzs/SpzsTypeTable'
+import {spzsCtrlTable} from './Spzs/SpzsCtrlTable'
 
 export class CreateViews {
-
 	constructor(context: vscode.ExtensionContext) {
-		const view = vscode.window.createTreeView('GlobalView', { treeDataProvider: new GlobalViewDataProvider(), showCollapseAll: true });
+		var globalViewDataProvider = new GlobalViewDataProvider();
+		const view = vscode.window.createTreeView('GlobalView', { treeDataProvider: globalViewDataProvider, showCollapseAll: true });
 		vscode.commands.registerCommand('extension.GlobalView.reveal', async () => {
-			const key = await vscode.window.showInputBox({ placeHolder: 'Type the label of the item to reveal' });
-			if (key) {
-				await view.reveal({ key }, { focus: true, select: false, expand: true });
-			}
+			globalViewDataProvider.refreshTree();
+			// const key = await vscode.window.showInputBox({ placeHolder: 'Type the label of the item to reveal' });
+			// if (key) {
+				// await view.reveal(key , { focus: true, select: false, expand: true });
+			// }
 		});
+		vscode.commands.registerCommand('extension.GlobalView.Selection', (line:number, length:number) => globalViewDataProvider.SelectItem(line, length));
 	}
 }
 
+// tree item for global proporties views
+export class ContentItem{
+	constructor(public type:string, public proporty:string, public lineText:string, public lineNum:number){
+
+	}
+}
+
+// proporties content manager
 export class ContentManager{
 	constructor(private data_type:string[]) {
-		console.log('ContentManager');
-		this.data = {};
-		// for (var str of data_type){
-		// 	console.log(str);
-		// 	this.data[str] = [];
-		// }
-		for (var key in this.data)
-		{
-			console.log(key);
-		}
+		this.treeData = {};
+		this.lineData = {};
 		this.UpdateContent();
 	}
 
-	data: {};
+	treeData: {};
+	lineData: {};
+	editor: vscode.TextEditor | undefined;
 	
-	public GetData(tag: string)
+	public GetTreeData():any
 	{
-		return '';
+		return this.treeData;
 	}
 
-	public UpdateContent()
+	public GetLineData(line: string):ContentItem
 	{
+		return (this.lineData as any)[line]
+	}
 
+	public ResetData()
+	{
+		this.lineData = {}
+		this.data_type.forEach((element) => {
+			(this.treeData as any)[element] = {};
+			spzsTypeTable
+		});
+	}
+
+	// update all content of proporties of file
+	public UpdateContent()
+	{	
+		let getProporty = function(type:string, line: string, nextLine: string){
+			if (type == 'function')
+			{
+				let words1 = line.split('(')[0]
+				let words2 = line.split('(')[0]
+				if (words1.includes(' in') || words2.includes(' in'))
+					return line.split(' ', 3)[1];
+				else
+					return null;
+			}
+			else if (type == 'macro')
+			{
+				if (line.includes(' out') || nextLine.includes(' out'))
+					return null;
+				else
+					return line.replace('macro', '').replace(' ', '').replace('(', '').replace(')', '')
+			}
+			else
+			{
+				let words = line.split(' ');
+				for (var i = 0; i < words.length; i++){
+					if (!spzsTypeTable.hasOwnProperty(words[i]) && 
+						!spzsCtrlTable.hasOwnProperty(words[i]) &&
+						!words[i].includes('['))
+					{
+						return words[i].split(':')[0].replace(';', '');
+					}
+				}
+			}
+			return null;
+		}
+
+		this.ResetData();
+
+		this.editor = vscode.window.activeTextEditor;
+		if (this.editor && this.editor.document) {
+			let document = this.editor.document;
+
+			for	(var str_type in this.treeData){
+				var newTreeData = {};
+				for (var i = 0; i < document.lineCount-1; i++){
+					let line = document.lineAt(i);
+					let text = line.text.substr(line.firstNonWhitespaceCharacterIndex, line.text.length);
+					let fistWord = text.split(" ", 2)[0];
+					if (fistWord.includes(str_type) && !fistWord.includes('//') ){
+						let nextLine = document.lineAt(i+1);
+						let nextText = nextLine.text.substr(line.firstNonWhitespaceCharacterIndex, nextLine.text.length);
+						let proporty = getProporty(str_type, text, nextText);
+						if (proporty != null){
+							(this.lineData as any)[i.toString()] = new ContentItem(str_type, proporty, text, i);
+							(newTreeData as any)[i.toString()] = {};
+						}
+					}
+				}
+				(this.treeData as any)[str_type] = newTreeData;
+			}
+		}
 	}
 }
 
-export class GlobalViewDataProvider implements vscode.TreeDataProvider<{ key: string }>{
-	private _onDidChangeTreeData: vscode.EventEmitter<{ key: string } | undefined> = new vscode.EventEmitter<{ key: string } | undefined>();
-	readonly onDidChangeTreeData: vscode.Event<{ key: string } | undefined> = this._onDidChangeTreeData.event;
+export class GlobalViewDataProvider implements vscode.TreeDataProvider<string>{
+	private _onDidChangeTreeData: vscode.EventEmitter<string | undefined> = new vscode.EventEmitter<string | undefined>();
+	readonly onDidChangeTreeData: vscode.Event<string  | undefined> = this._onDidChangeTreeData.event;
 	
 	constructor() {
-		console.log('GlobalViewDataProvider');
 		this.contentMgr = new ContentManager(this.data_type);
 	}
 
-	contentMgr: any;
-	data_type = ['attribute', 'varying', 'uniform', 'macro'];
+	contentMgr: ContentManager;
+	data_type = ['attribute', 'varying', 'uniform', 'macro', 'function'];
 
 	public refreshTree(): void {
 		console.log("refresh");
 		this._onDidChangeTreeData.fire();
 	}
 
-	public getTreeItem(element: { key: string }): vscode.TreeItem {
-		console.log('getTreeItem', element?element.key:'');
-		return new vscode.TreeItem('label' + element.key);
+	public SelectItem(line:number, length: number){
+		console.log(line);
+		let editor = vscode.window.activeTextEditor;
+		if (editor && editor.document)
+		{
+			vscode.window.showTextDocument(editor.document, line);
+			editor.selection = new vscode.Selection(new vscode.Position(line,0 ), new vscode.Position(line,length));
+		}
 	}
 
-	public getChildren(element: { key: string }): { key: string }[] {
-		console.log('getChildren', element?element.key:'');
-		return element?[]:[getNode('1'),getNode('2'),getNode('3'),getNode('4')];
+	public getTreeItem(element: string ): vscode.TreeItem {
+		let treeData = this.contentMgr.GetTreeData();
+		// when element is type data node
+		if (element in treeData)
+		{
+			let label = element;
+			let collapsible = vscode.TreeItemCollapsibleState.Collapsed;
+			return new vscode.TreeItem(label, collapsible);
+		}
+		// when element is line data node
+		else
+		{
+			let lineData = this.contentMgr.GetLineData(element);
+			let type = lineData.type;
+			let label = lineData.proporty;
+			let content = lineData.lineText;
+			let lineNum = lineData.lineNum;
+			let collapsible = vscode.TreeItemCollapsibleState.None;
+			let command = {
+				command: 'extension.GlobalView.Selection',
+				title:'',
+				arguments: [lineNum, content.length-1]
+			}
+			return new GlobalViewTreeItem(lineNum, label, content, collapsible, type, command);
+		}
 	}
 
-	public getParent(element: { key: string }): { key: string } {
-		console.log('getParent', element?element.key:'');
-		return undefined;
+	public getChildren(element: string ): string [] {
+		let treeData = this.contentMgr.GetTreeData();
+		if (element){
+			if (element in treeData){
+				// line data node (i.e. uniform position)
+				return Object.keys(treeData[element]);
+			}
+			else{
+				// no node
+				return [];
+			}
+		}else{
+			// type data node (i.e. uniform)
+			return Object.keys(treeData);
+		}
 	}
+
 }
 
 class GlobalViewTreeItem extends vscode.TreeItem{
 	constructor(
+		private line:number,
 		public readonly label: string,
 		private content: string,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
@@ -87,99 +205,18 @@ class GlobalViewTreeItem extends vscode.TreeItem{
 	}
 
 	get tooltip(): string {
-		return `${this.label}-${this.content}`;
+		return `${this.label} : ${this.content}`;
 	}
 
 	get description(): string {
-		return this.content;
+		return ' - ' + (this.line+1).toString();
 	}
 	
 	get iconPath(): any{
 		return {
-			light: path.join(__filename, '..', '..', 'resources', 'light', this.iconName),
-			dark: path.join(__filename, '..', '..', 'resources', 'dark', this.iconName)
+			light: path.join(__filename, '..', '..', 'images', 'resources', 'light', this.iconName+'.svg'),
+			dark: path.join(__filename, '..', '..', 'images', 'resources', 'dark', this.iconName+'.svg')
 		};
 	}
 
-}
-
-const tree = {
-	'a': {
-		'aa': {
-			'aaa': {
-				'aaaa': {
-					'aaaaa': {
-						'aaaaaa': {
-
-						}
-					}
-				}
-			}
-		},
-		'ab': {}
-	},
-	'b': {
-		'ba': {},
-		'bb': {}
-	}
-};
-let nodes = {};
-
-function aNodeWithIdTreeDataProvider(): vscode.TreeDataProvider<{ key: string }> {
-	return {
-		getChildren: (element: { key: string }): { key: string }[] => {
-			return getChildren(element ? element.key : undefined).map((key: string) => getNode(key));
-		},
-		getTreeItem: (element: { key: string }): vscode.TreeItem => {
-			const treeItem = getTreeItem(element.key);
-			treeItem.id = element.key;
-			return treeItem;
-		},
-		getParent: ({ key }: { key: string }): { key: string } => {
-			const parentKey = key.substring(0, key.length - 1);
-			return parentKey ? new Key(parentKey) : void 0;
-		}
-	};
-}
-
-function getChildren(key: string): string[] {
-	if (!key) {
-		return Object.keys(tree);
-	}
-	let treeElement = getTreeElement(key);
-	if (treeElement) {
-		return Object.keys(treeElement);
-	}
-	return [];
-}
-
-function getTreeItem(key: string): vscode.TreeItem {
-	const treeElement = getTreeElement(key);
-	return {
-		label: key,
-		tooltip: `Tooltip for ${key}`,
-		collapsibleState: treeElement && Object.keys(treeElement).length ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None
-	};
-}
-
-function getTreeElement(element): any {
-	let parent = tree;
-	for (let i = 0; i < element.length; i++) {
-		parent = parent[element.substring(0, i + 1)];
-		if (!parent) {
-			return null;
-		}
-	}
-	return parent;
-}
-
-function getNode(key: string): { key: string } {
-	if (!nodes[key]) {
-		nodes[key] = new Key(key);
-	}
-	return nodes[key];
-}
-
-class Key {
-	constructor(readonly key: string) { }
 }

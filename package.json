@@ -85,7 +85,7 @@
 			"activitybar": [
 				{
 					"id": "shaderLab",
-					"title": "shader lab",
+					"title": "shader proporties",
 					"icon": "images/dep.svg"
 				}
 			]
