@@ -1,9 +1,10 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
 
 export class CreateViews {
 
 	constructor(context: vscode.ExtensionContext) {
-		const view = vscode.window.createTreeView('GlobalView', { treeDataProvider: new GlobalViewDataProvider('123'), showCollapseAll: true });
+		const view = vscode.window.createTreeView('GlobalView', { treeDataProvider: new GlobalViewDataProvider(), showCollapseAll: true });
 		vscode.commands.registerCommand('extension.GlobalView.reveal', async () => {
 			const key = await vscode.window.showInputBox({ placeHolder: 'Type the label of the item to reveal' });
 			if (key) {
@@ -13,14 +14,47 @@ export class CreateViews {
 	}
 }
 
+export class ContentManager{
+	constructor(private data_type:string[]) {
+		console.log('ContentManager');
+		this.data = {};
+		// for (var str of data_type){
+		// 	console.log(str);
+		// 	this.data[str] = [];
+		// }
+		for (var key in this.data)
+		{
+			console.log(key);
+		}
+		this.UpdateContent();
+	}
+
+	data: {};
+	
+	public GetData(tag: string)
+	{
+		return '';
+	}
+
+	public UpdateContent()
+	{
+
+	}
+}
+
 export class GlobalViewDataProvider implements vscode.TreeDataProvider<{ key: string }>{
 	private _onDidChangeTreeData: vscode.EventEmitter<{ key: string } | undefined> = new vscode.EventEmitter<{ key: string } | undefined>();
 	readonly onDidChangeTreeData: vscode.Event<{ key: string } | undefined> = this._onDidChangeTreeData.event;
-
-	constructor(private workspaceRoot: string) {
+	
+	constructor() {
+		console.log('GlobalViewDataProvider');
+		this.contentMgr = new ContentManager(this.data_type);
 	}
 
-	public refresh(): void {
+	contentMgr: any;
+	data_type = ['attribute', 'varying', 'uniform', 'macro'];
+
+	public refreshTree(): void {
 		console.log("refresh");
 		this._onDidChangeTreeData.fire();
 	}
@@ -39,6 +73,34 @@ export class GlobalViewDataProvider implements vscode.TreeDataProvider<{ key: st
 		console.log('getParent', element?element.key:'');
 		return undefined;
 	}
+}
+
+class GlobalViewTreeItem extends vscode.TreeItem{
+	constructor(
+		public readonly label: string,
+		private content: string,
+		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
+		public readonly iconName: string,
+		public readonly command?: vscode.Command
+	) {
+		super(label, collapsibleState);
+	}
+
+	get tooltip(): string {
+		return `${this.label}-${this.content}`;
+	}
+
+	get description(): string {
+		return this.content;
+	}
+	
+	get iconPath(): any{
+		return {
+			light: path.join(__filename, '..', '..', 'resources', 'light', this.iconName),
+			dark: path.join(__filename, '..', '..', 'resources', 'dark', this.iconName)
+		};
+	}
+
 }
 
 const tree = {

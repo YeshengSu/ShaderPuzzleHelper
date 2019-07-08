@@ -1,0 +1,598 @@
+["pbr shader"]
+pipeline
+<
+	version = "1.0.7"
+	author = "hch"
+	category = "common"
+	company = "netease"
+	merge = "1"
+>
+{
+	// 贴图
+	["Base Color(RGB)"]
+	uniform sampler Tex0 : DIFFUSE
+	<
+		artist = "1"
+		mag = "linear"
+		mip = "linear"
+		min = "linear"
+		lodbias = "-1.0"
+	>;
+	["Normalmap(RGB)"]
+	uniform sampler NormalMap
+	<
+		artist = "1"
+		mag = "linear"
+		mip = "linear"
+		min = "linear"
+		lodbias = "-1.0"
+	>;
+	["Roughness Metal"]
+	uniform sampler RoughnessMetalMap
+	<
+		artist = "1"
+		mag = "linear"
+		mip = "linear"
+		min = "linear"
+		lodbias = "-1.0"
+	>;
+	["EmissiveMap"]
+	uniform sampler EmissiveMap
+	<
+		artist = "1"
+		mag = "linear"
+		mip = "linear"
+		min = "linear"
+		lodbias = "-1.0"
+	>;
+	
+	["涂装贴图"]
+	uniform sampler DirtyMap
+	<
+		artist = "1"
+		mag = "linear"
+		mip = "linear"
+		min = "linear"
+		lodbias = "-1.0"
+	>;
+	["势力色"]
+	uniform lowp float4 campcolor
+	<
+		artist = "1"
+		color = "1"
+		init = "0.5,0.5,0.5,1.0"
+	>;
+	["涂装缩放"]
+	uniform lowp float dirty_uv_offset
+	<
+		artist = "1"
+		min = "0.1"
+		max = "20.0"
+		uistep = "0.1"
+		init = "1.0"
+	>;				
+	
+	["Prefiltered EnvCubeMap"]
+	uniform samplercube PrefilteredEnvCubeMap
+	<
+		artist = "1"
+		mip = "linear"
+		min = "linear"
+		mag = "linear"
+	>;
+
+	["Max roughness lod"]
+	uniform float MaxRoughnessLod
+	<
+		artist = "1"
+		init = "5.0"
+		max = "10.0"
+		min = "0.0"
+	>;
+	["explosure"]
+	uniform float explosure
+	<
+		artist = "1"
+		init = "0.6"
+		max = "5.0"
+		min = "0.0"
+		uistep = "0.1"
+	>;
+
+	["EmissiveFactor自发光的颜色控制"]
+	uniform float EmissiveFactor
+	<
+		artist = "1"
+		init = "1.0"
+		max = "1.0"
+		min = "0.0"
+		uistep = "0.01"
+	>;
+
+	["lightFactor"]
+	uniform float lightFactor
+	<
+		artist = "1"
+		init = "4.0"
+		max = "5.0"
+		min = "1.0"
+		uistep = "0.01"
+	>;
+
+	["阴影透明度"]
+	uniform highp float shadow_alpha
+	<
+		artist = "1"
+		min = "0.0"
+		max = "1.0"
+		init = "0.9"
+	>;
+
+	uniform highp samplershadow SMAP: SHADOW
+	<
+		artist = "0"
+		mag = "none"
+		mip = "none"
+		min = "none"
+		// map = "nearest"
+		addressu = "clamp"
+		addressv = "clamp"
+		lodbias = "-1.0"
+	>;
+
+	["阴影对于环境光的影响参数"]
+	uniform highp float shadow_env
+	<
+		artist = "1"
+		init = "1.0"
+	>;
+
+	["硬件合并批次"]
+	macro(INSTANCE_TYPE)
+	<
+		cache="1"
+		default="INSTANCE_TYPE_NONE"
+	>;
+
+
+	["环境光参数"]
+	uniform highp float env_art_factor
+	<
+		artist = "1"
+		init = "1.0"
+	>;
+
+	uniform highp float4x4 irrad_mat_red
+	<
+		init = "(0.01518, 0.0019, -0.00176, -0.01276, 0.0019, -0.01518, 0.00127, 0.00096, -0.00176, 0.00127, 0.00694, 0.00085, -0.01276, 0.00096, 0.00085, 0.53353)"
+	>;
+
+	uniform highp float4x4 irrad_mat_green
+	<
+		init = "(0.01274, 0.00125, -0.00141, -0.00568, 0.00125, -0.01274, 0.00194, -0.00066, -0.00141, 0.00194, 0.00761, -0.00319, -0.00568, -0.00066, -0.00319, 0.42996)"
+	>;
+
+	uniform highp float4x4 irrad_mat_blue
+	<
+		init = "(0.0114, 9e-05, -0.00088, 0.00041, 9e-05, -0.0114, 0.00283, -0.00403, -0.00088, 0.00283, 0.00811, -0.01114, 0.00041, -0.00403, -0.01114, 0.34649)"
+	>;
+
+	uniform highp float4[4] uv_range
+	<
+		init = "(0.0, 0.5, 0.5, 1.0, 0.5, 0.5, 1.0, 1.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.0, 1.0, 0.5)"
+	>;
+
+	// uniform变量
+	uniform highp float4x4 u_wvp : WORLD_VIEW_PROJECTION;
+	uniform highp float4x4 u_view_proj:VIEW_PROJECTION;
+	uniform highp float4x4 u_world : WORLD;
+	["投影变换"]
+	uniform highp float4x4 u_projection: PROJECTION;
+	uniform highp float4 u_camera_pos : CAMERA_POSITION;
+	// 用来做方向光
+	uniform highp float4[LIGHT_ATTR_ITEM_NUM] ShadowLightAttr : SHADOW_LIGHT_ATTR;
+	uniform highp float frame_time: FRAME_TIME;
+	// attribute变量
+	attribute float4 a_texcoord0 : TEXTURE0;
+	// hard instancing
+	attribute float4 texcoord4 : TEXTURE4;
+	attribute float4 texcoord5 : TEXTURE5;
+	attribute float4 texcoord6 : TEXTURE6;
+	attribute float4 texcoord7 : TEXTURE7;
+
+	attribute float4 a_position : POSITION;
+	attribute float4 a_normal : NORMAL;
+	attribute float4 a_tangent : TANGENT;
+	uniform float4 viewport_size: VIEWPORT_SIZE;
+
+	macro(NORMAL_MAP_ENABLE)
+	<
+		default = "1"
+	>;
+
+	uniform float AlphaMtl : ALPHA_MTL
+	<
+		init = "1.0"
+	>;
+
+	// 阴影相关
+	uniform highp float4[16] light_view_proj: LIGHT_VIEW_PROJ;
+	uniform highp float4 shadow_blend_all: SHADOW_BLEND_ALL;
+	// varying变量
+	varying mediump float2 v_uv0;
+	varying highp float4 v_pos_world;
+	varying highp float3 v_tangent_world;
+	varying highp float3 v_binormal_world;
+	varying highp float3 v_normal_world;
+	// varying highp float4 v_position;
+	// varying highp float2 v_screen_uv;
+
+	// varying highp float4 v_light_proj_pos;
+
+	function g1v in(float dot_nv, float k)
+	out (float g_out)
+	{
+		out(g_out, dot_nv/(dot_nv*(1.0f-k) + k));
+	};
+
+	function env_brdf in(
+		float roughness,
+		float ndotv
+	)
+	out (float2 env_brdf)
+	{
+		float4 c0 = float4(-1.0f, -0.0275f, -0.572f, 0.022f);
+		float4 c1 = float4(1.0f, 0.0425f, 1.04f, -0.04f);
+		float4 r = float4(roughness)*c0+c1;
+		float a004 = min(r.x*r.x, exp2(-9.28f*ndotv)) * r.x + r.y;
+		out(env_brdf, float2(-1.04f, 1.04f) * float2(a004) + r.zw);
+	};
+
+	function aces_tone_mapping in(
+		float3 color,
+		float adapted_lum
+	)
+	out (float3 result)
+	{
+		float A = 2.71f;
+		float B = 0.03f;
+		float C = 2.43f;
+		float D = 0.59f;
+		float E = 0.14f;
+
+		float3 adapted_color = color*float3(adapted_lum);
+		out(result, (adapted_color * (float3(A)*adapted_color + float3(B))) / (adapted_color * (float3(C) * adapted_color + float3(D)) + float3(E)));
+	};
+
+	function calc_shadow_csm_pos in(
+	    lowp int csm_index,
+	    highp float4x4 light_view_proj_input,
+	    highp float4 pos_world,
+	    highp float4[4]uv_range_input
+	) out(lowp int cascad_id, highp float4 r_shadow_pos)
+	{
+	    float4 shadow_pos_tmp = transform(pos_world, light_view_proj_input);
+	    float4 shadow_pos_1 = float4(shadow_pos_tmp.xyz/float3(shadow_pos_tmp.w), shadow_pos_tmp.w);
+	    float4 shadow_pos = float4(shadow_pos_1.xyz * float3(0.5f) + float3(0.5f, 0.5f, 0.5f), shadow_pos_1.w);
+	    condition(shadow_pos, uv_range_input[csm_index]) out(lowp int id)
+	    {
+	        // if(shadow_pos.x > uv_range[i].z || shadow_pos.x < uv_range[i].x || shadow_pos.y > uv_range[i].w || shadow_pos.y < uv_range[i].y || shadow_pos.z > 1.0 || shadow_pos.z < 0.0)
+	        branch("%0%.x > %1%.z || %0%.x < %1%.x || %0%.y > %1%.w || %0%.y < %1%.y || %0%.z > 1.0 || %0%.z < 0.0")
+	        {
+	            out(id, 999);
+	        }
+	        default
+	        {
+	            out(id, csm_index);
+	        }
+	    };
+	    out(cascad_id, id);
+	    // condition(id) out(float4 shadow_pos_com)
+	    // {
+	    // 	branch("%0% > 10.0")
+	    // 	{
+	    // 		out(shadow_pos_com, float4(0.0f, 0.0f, 0.0f, 0.0f));
+	    // 	}
+	    // 	default
+	    //     {
+	    //         out(shadow_pos_com, shadow_pos);
+	    //     }
+	    // };
+	    out(r_shadow_pos, shadow_pos);
+	};
+
+	["开启涂装"]
+	eitheror DIRTY_ENABLE;
+	macro(DIRTY_ENABLE)
+	<
+		customizable = "1"
+		artist = "1"
+	>;
+
+	vertex
+	{
+		["世界空间矩阵计算"]
+		function get_inst_world_mat(
+			texcoord5,
+			texcoord6,
+			texcoord7,
+			u_world)out(highp float4x4 real_world);
+
+		highp float4 position = a_position;
+		highp float4 normal = a_normal;
+
+		//计算世界坐标用于光照
+		highp float4 pos_world = transform(position, real_world);
+		out(v_pos_world, pos_world);
+		
+		//计算顶点位置
+		highp float4 screen_pos = transform(pos_world, u_view_proj);
+		vertex(screen_pos);
+
+		// out(v_screen_uv, screen_pos.xy);
+
+
+
+		// highp float4 light_space_pos = transform(pos_world, light_view_proj);
+		// highp float3 light_space_norm = light_space_pos.xyz / float3(light_space_pos.w);
+		// highp float3 light_space_norm = normalize(light_space_pos.xyz);
+
+		// highp float2 uv = light_space_norm.xy * float2(0.5f, 0.5f) + float2(0.5f, 0.5f);
+
+		// vertex(float4(uv, 0.1f, 1.0f));
+
+		//计算normal
+		float3x3 world_mat = float3x3(real_world);
+		highp float3 normal_world = float3(normalize(transform(normal.xyz, world_mat)));
+		out(v_normal_world, normal_world);
+
+		highp float3 tangent_world = float3(normalize(a_tangent.xyz * world_mat));
+		out(v_tangent_world, tangent_world);
+
+		// 通过uv空间来判断是否镜像模型，如果为镜像模型则反转法线
+		highp float test_sign = float(sign(step(length(a_tangent.xyz), 1.0f) - 0.5f));
+		highp float3 binormal_world = cross(normal_world, tangent_world) * test_sign;
+		out(v_binormal_world, binormal_world);
+
+		out(v_uv0, a_texcoord0.xy);
+
+		// out(v_position, a_position);
+	}
+
+	pixel
+	{
+		//采样贴图
+		lowp float4 _base_color_ = sample(Tex0, v_uv0);
+		macro(DIRTY_ENABLE) out (lowp float3 _base_color)
+		{
+			branch("1")
+			{
+				lowp float changecolor_mask = _base_color_.a;
+				//采样迷彩贴图
+				lowp float4 dirtycolor = sample(DirtyMap, v_uv0*dirty_uv_offset);
+				out(_base_color, lerp(_base_color_.xyz,dirtycolor.xyz*campcolor.xyz*2.0f,float3(changecolor_mask)) );
+
+			}
+			branch("0")
+			{
+				out(_base_color, _base_color_.xyz);
+			}
+		};
+		function gamma_correct_began(_base_color) out(float3 base_color);
+
+		// lowp float4 base_color = _base_color;
+
+		// 法线贴图的采样和法线计算
+		lowp float3 vertex_normal_world = v_normal_world;
+		
+		["normalmap开关"]
+		macro(NORMAL_MAP_ENABLE) out(highp float2 norm_off_xy)
+		{
+			branch("0")
+			{
+				out(norm_off_xy, float2(0.0f, 0.0f));
+			}
+			branch("1")
+			{
+				highp float4 normal_map_color = sample(NormalMap, v_uv0);
+				out(norm_off_xy, normal_map_color.xy * 2.0f - float2(1.0f));
+			}
+		};
+
+		
+		highp float norm_off_z = sqrt(1.0f-dot(norm_off_xy, norm_off_xy));
+		highp float3 xnorm = v_tangent_world * float3(norm_off_xy.x);
+		highp float3 ynorm = v_binormal_world * float3(norm_off_xy.y);
+		highp float3 znorm = v_normal_world * float3(norm_off_z);
+		highp float3 n = normalize(xnorm + ynorm + znorm);
+		// 方向光属性
+		lowp float4 light_color = ShadowLightAttr[1];
+		mediump float4 _light_dir = -ShadowLightAttr[3];
+		highp float3 l = normalize(_light_dir.xyz);
+
+		// 视线方向
+		highp float3 v = normalize(u_camera_pos.xyz - v_pos_world.xyz);
+		lowp float4 roughness_metal = sample(RoughnessMetalMap, v_uv0);
+		lowp float ao = roughness_metal.x;
+		lowp float roughness = roughness_metal.y;
+		lowp float metallic = roughness_metal.z;
+		lowp float3 albedo = base_color.xyz*(1.0f-metallic);
+		lowp float3 f0 = lerp(float3(0.04f), base_color.xyz, float3(metallic));
+
+		float alpha = roughness*roughness;
+		float3 h = normalize(v+l);
+		float NoL = saturate(dot(n, l));
+		float NoV = saturate(dot(n, v));
+		float NoH = saturate(dot(n, h));
+		float LoH = saturate(dot(l, h));
+		// NDF :GGX
+		float alpha_sqr = alpha*alpha;
+		float pi = 3.1415926535f;
+		float denom = NoH * NoH * (alpha_sqr - 1.0f) + 1.0f;
+		float D = alpha_sqr / (pi*denom*denom);
+		// Fresnel (Schlick)
+		float LoH_5 = pow(1.0f - LoH, 5.0f);
+		float3 F = f0+(float3(1.0f)-f0)*LoH_5;
+		// Geometry (visibility)
+		float k = (roughness+1.0f)*(roughness+1.0f)/8.0f;
+		function g1v(NoL, k) out(float gnl);
+		function g1v(NoV, k) out(float gnv);
+		float G = gnl*gnv;
+
+		// D*F*G/(4.0f*NoV*NoL)*NoL*light_color. the NoL is cancelled with each other.
+		float3 direct_specular = D*F*G/(4.0f*NoV);
+		float3 direct_diffuse = albedo/pi;
+
+		float3 r = normalize(reflect(-v, n));
+		// function env_sample_lod(PrefilteredEnvMap, r, roughness*MaxRoughnessLod) out (float4 prefiltered_env);
+		// function env_sample_lod(PrefilteredEnvMap, r, 0.0f) out (float4 prefiltered_env_encoded);
+		// function log_luv_decode(prefiltered_env_encoded) out (float3 prefiltered_env);
+		float3 prefiltered_env = samplelod(PrefilteredEnvCubeMap, r, roughness*MaxRoughnessLod).xyz;
+		// float3 prefiltered_env = pow(encoded_prefiltered_env.xyz, float3(1.0f));
+		// function log_luv_decode(encoded_prefiltered_env) out(float3 decoded_prefiltered_env);
+		// float3 prefiltered_env = pow(decoded_prefiltered_env, float3(2.2f));
+		// float3 prefiltered_env = samplelod(PrefilteredEnvCubeMap, r, MaxRoughnessLod).xyz;
+		function env_brdf(roughness, NoV) out(float2 env_brdf);
+
+		// function env_irradiance(n) out(float3 env_diff);
+		// float3 env_diff = sample(IrraEnvCubeMap, r).xyz;
+
+		highp float3 emissive_color = sample(EmissiveMap, v_uv0).xyz;
+		float4 shDir = float4(n, 1.0f);
+		float4 rvec = float4(transform(shDir, irrad_mat_red));
+		float4 gvec = float4(transform(shDir, irrad_mat_green));
+		float4 bvec = float4(transform(shDir, irrad_mat_blue));
+		float3 compute_diffuse = float3(dot(shDir, rvec),dot(shDir, gvec),dot(shDir, bvec));
+		mediump float3 env_diff = max(float3(0.0f), compute_diffuse);
+
+		// float4 light_proj_pos = v_light_proj_pos;
+
+		float use_shadow_alpha = shadow_alpha;
+
+		// ["shadowmap阴影"]
+		macro(SHADOW_MAP_ENABLE) out(float shadow_factor, lowp int cascade_index)
+		{
+			branch("1")
+			{
+				float4 a = float4(light_view_proj[0][0], light_view_proj[0][1], light_view_proj[0][2], light_view_proj[0][3]);
+			    float4 b = float4(light_view_proj[1][0], light_view_proj[1][1], light_view_proj[1][2], light_view_proj[1][3]);
+			    float4 c = float4(light_view_proj[2][0], light_view_proj[2][1], light_view_proj[2][2], light_view_proj[2][3]);
+			    float4 d = float4(light_view_proj[3][0], light_view_proj[3][1], light_view_proj[3][2], light_view_proj[3][3]);
+			    highp float4x4 light_view_proj_1 = float4x4(a, b, c, d);
+
+			    float4 e_1 = float4(light_view_proj[4][0], light_view_proj[4][1], light_view_proj[4][2], light_view_proj[4][3]);
+			    float4 f_1 = float4(light_view_proj[5][0], light_view_proj[5][1], light_view_proj[5][2], light_view_proj[5][3]);
+			    float4 g_1 = float4(light_view_proj[6][0], light_view_proj[6][1], light_view_proj[6][2], light_view_proj[6][3]);
+			    float4 h_1 = float4(light_view_proj[7][0], light_view_proj[7][1], light_view_proj[7][2], light_view_proj[7][3]);
+			    highp float4x4 light_view_proj_2 = float4x4(e_1, f_1, g_1, h_1);
+
+			    float4 j_tmp = float4(light_view_proj[8][0], light_view_proj[8][1], light_view_proj[8][2], light_view_proj[8][3]);
+			    float4 k_tmp = float4(light_view_proj[9][0], light_view_proj[9][1], light_view_proj[9][2], light_view_proj[9][3]);
+			    float4 l_tmp = float4(light_view_proj[10][0], light_view_proj[10][1], light_view_proj[10][2], light_view_proj[10][3]);
+			    float4 o_tmp = float4(light_view_proj[11][0], light_view_proj[11][1], light_view_proj[11][2], light_view_proj[11][3]);
+			    highp float4x4 light_view_proj_3 = float4x4(j_tmp, k_tmp, l_tmp, o_tmp);
+
+			    float4 a_tmp = float4(light_view_proj[12][0], light_view_proj[12][1], light_view_proj[12][2], light_view_proj[12][3]);
+			    float4 b_tmp = float4(light_view_proj[13][0], light_view_proj[13][1], light_view_proj[13][2], light_view_proj[13][3]);
+			    float4 c_tmp = float4(light_view_proj[14][0], light_view_proj[14][1], light_view_proj[14][2], light_view_proj[14][3]);
+			    float4 d_tmp = float4(light_view_proj[15][0], light_view_proj[15][1], light_view_proj[15][2], light_view_proj[15][3]);
+			    highp float4x4 light_view_proj_4 = float4x4(a_tmp, b_tmp, c_tmp, d_tmp);
+
+			    function calc_shadow_csm_pos(0, light_view_proj_1, float4(v_pos_world), uv_range) out(lowp int cascad_id_1, highp float4 shadow_pos_1);
+			    function calc_shadow_csm_pos(1, light_view_proj_2, float4(v_pos_world), uv_range) out(lowp int cascad_id_2, highp float4 shadow_pos_2);
+			    function calc_shadow_csm_pos(2, light_view_proj_3, float4(v_pos_world), uv_range) out(lowp int cascad_id_3, highp float4 shadow_pos_3);
+			    function calc_shadow_csm_pos(3, light_view_proj_4, float4(v_pos_world), uv_range) out(lowp int cascad_id_4, highp float4 shadow_pos_4);
+			    float4x4 shadow_dict = float4x4(shadow_pos_1, shadow_pos_2, shadow_pos_3, shadow_pos_4);
+			    lowp int fir = min(cascad_id_1, cascad_id_2);
+				lowp int sec = min(fir, cascad_id_3);
+				lowp int third = min(sec, cascad_id_4);
+				lowp int i_csm = clamp( third, 0, 999);
+
+				condition(i_csm) out(float shadow_factor_result_cal, int cascade_index_cal)
+				{
+					branch("%0% == 999")
+					{
+						out(shadow_factor_result_cal, 1.0f);
+						out(cascade_index_cal, 999);
+					}
+					default
+					{
+						lowp float scale_offset = 4.0f -float(sign(i_csm)) * 3.0f;
+
+						highp float factor_out = saturate(dot(-n, normalize(_light_dir.xyz)));
+						highp float bias = clamp( shadow_blend_all.y * scale_offset * (1.0f -factor_out), 0.0005f,  shadow_blend_all.y*scale_offset );
+						float4 tmp = float4(shadow_dict[i_csm]);
+						float3 light_pos = float3(tmp.xyz);
+						highp float depth = light_pos.z - bias - 0.003f;
+						// highp float depth = light_pos.z;
+
+						// highp float sample_depth = sample(SMAP, light_pos.xy).x;
+						// highp float factor = step(sample_depth, light_pos.z);
+						// highp float _shadow_factor = 1.0f - shadow_alpha*factor;
+
+						highp float factor = sampleProj(SMAP, float4(light_pos.xy, depth, 1.0f));
+						highp float _shadow_factor = shadow_alpha*factor;
+
+
+						highp float4 inLightVec = sign(float4(light_pos.x, 1.0f-light_pos.x, light_pos.y, 1.0f-light_pos.y));
+						// 只有inLightVec每一个分量都是1，dot的结果才会为4，inLight的值才会为1
+						highp float inLight = step(3.5f, dot(inLightVec, float4(1.0f, 1.0f, 1.0f, 1.0f)));
+
+						// 投影范围外的shadow_factor是1
+						float shadow_factor_result = clamp(_shadow_factor + (1.0f-inLight), 0.0f, 1.0f);
+						// float shadow_factor_result = _shadow_factor;
+
+						// out(shadow_factor, shadow_factor_result);
+						out(cascade_index_cal, i_csm);
+						out(shadow_factor_result_cal, shadow_factor_result);
+					}
+				};
+
+				out(cascade_index, i_csm);
+				out(shadow_factor, shadow_factor_result_cal);
+
+			}
+			branch("0")
+			{
+				out(shadow_factor, 1.0f);
+				out(cascade_index, 0);
+			}
+		};
+
+		float3 pbr_color =	max(float3(0.0f), shadow_factor*(NoL*direct_diffuse+direct_specular)*light_color.xyz*lightFactor) // 方向光
+							+ max(float3(0.0f), env_art_factor * ao * (albedo*env_diff.xyz + prefiltered_env*(env_brdf.x*f0+float3(env_brdf.y))))// 环境光
+							+ float3(EmissiveFactor)*emissive_color;  // 自发光
+		// condition(cascade_index) out(float3 test_color)
+		// {
+		// 	branch("%0% == 0")
+		// 	{
+		// 		out(test_color, float3(1.0f, 0.0f, 0.0f));
+		// 	}
+		// 	branch("%0% == 1")
+		// 	{
+		// 		out(test_color, float3(0.0f, 1.0f, 0.0f));
+		// 	}
+		// 	branch("%0% == 2")
+		// 	{
+		// 		out(test_color, float3(0.0f, 0.0f, 1.0f));
+		// 	}
+		// 	branch("%0% == 3")
+		// 	{
+		// 		out(test_color, float3(0.0f, 1.0f, 1.0f));
+		// 	}
+		// 	default
+		// 	{
+		// 		out(test_color, float3(1.0f, 1.0f, 1.0f));
+		// 	}
+		// };
+		// float3 pbr_color = float3(test_color);
+
+		float4 pbr_cloaking_color = float4(pbr_color, AlphaMtl);
+
+		function tonmapping(explosure, pbr_cloaking_color.xyz) out(float3 tone_mapped_color);
+
+		function gamma_correct_ended(tone_mapped_color.xyz) out(float3 color_result);
+
+		pixel(float4(color_result, pbr_cloaking_color.w));
+	}
+}

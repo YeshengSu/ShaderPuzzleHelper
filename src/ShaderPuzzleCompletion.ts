@@ -118,7 +118,6 @@ export class ShaderPuzzleCompletion{
 				}
 			}
 
-
 			for (var name in spzsCtrlTable) {
 				if (matches(name)){
 					result.push(createNewProposal(CompletionItemKind.Field, name, spzsCtrlTable[name], 'PipelineControl'));
