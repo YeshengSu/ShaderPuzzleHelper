@@ -25,7 +25,9 @@ Describe specific features of this extension.
 
 ## Requirements
 
-### Install Extension
+* Visual Studio Code v1.17.0
+
+## Install Extension
 - Download [shader-puzzle-helper-0.0.1.vsix](https://github.com/YeshengSu/ShaderPuzzleHelper/raw/master/shader-puzzle-helper-0.0.1.vsix)
 - Open *Visual Studio Code*
 - Select Install From VSIX
@@ -33,7 +35,7 @@ Describe specific features of this extension.
 - Select *shader-puzzle-helper-0.0.1.vsix*
 ![Install2](images/Install2.png)
 
-### Compile Source Code
+## Compile Source Code
 - Install *Visual Studio Code*
 - Install Node.js
 - Download Source Code
@@ -52,8 +54,5 @@ Calling out known issues can help limit users opening duplicate issues against y
 * [vscode-docs on GitHub](https://github.com/Microsoft/vscode-docs)
 * [VS Code Extension Samples](https://github.com/microsoft/vscode-extension-samples)
 
-## Requirements
-
-Visual Studio Code v1.17.0
 
 **Enjoy!**
