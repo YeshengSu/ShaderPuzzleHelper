@@ -19,5 +19,5 @@ export function activate(context: vscode.ExtensionContext) {
 
 // this method is called when your extension is deactivated
 export function deactivate() {
-	
+	vscode.window.showInformationMessage('shader puzzle tool is deactivated!');
 }

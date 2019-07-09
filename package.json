@@ -49,7 +49,11 @@
 			},
 			{
 				"command": "extension.GlobalView.refreshTree",
-				"title": "Global View: Refresh Tree"
+				"title": "Refresh Global Tree",
+				"icon": {
+					"light": "images/resources/light/refresh.svg",
+					"dark": "images/resources/dark/refresh.svg"
+				}
 			}
 		],
 		"keybindings": [
@@ -79,6 +83,13 @@
 					"command": "extension.OpenShaderPuzzleWeb",
 					"group": "navigation"
 				}
+			],
+			"view/title": [
+				{
+					"command": "extension.GlobalView.refreshTree",
+					"when": "view == GlobalView",
+					"group": "navigation"
+				}
 			]
 		},
 		"viewsContainers": {
@@ -94,11 +105,12 @@
 			"shaderLab": [
 				{
 					"id": "GlobalView",
-					"name": "Global Proporties"
+					"name": "Global Proporties",
+					"when": "GlobalProportiesEnabled"
 				},
 				{
 					"id": "LocalView",
-					"name": "Uniform Proporties"
+					"name": "Local Proporties"
 				}
 			]
 		},
