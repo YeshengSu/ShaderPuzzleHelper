@@ -56,14 +56,18 @@ export class ShaderPuzzleCompletion{
 					}
 					if (entry.parameters) {
 						let signature = type ? '(' + type + ') ' : '';
+						let param_expain = '';
 						signature += name;
 						signature += '(';
 						if (entry.parameters && entry.parameters.length != 0) {
 							let params = '';
 							entry.parameters.forEach(p => params += p.label + ',');
+							entry.parameters.forEach(p => param_expain += p.label + ' : ' + p.documentation + '\n');
 							signature += params.slice(0, -1);
 						}
-						signature += ')';
+						signature += ')\n\n';
+						signature += param_expain;
+						
 						proposal.detail = signature;
 					}
 				}
