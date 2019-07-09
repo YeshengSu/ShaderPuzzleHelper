@@ -33,9 +33,9 @@ Describe specific features of this extension.
 - Install *Visual Studio Code*
 - Install Node.js
 - Download Source Code
-- Run *npm install* with command-line in directory of source code file.
+- Run `npm install` with command-line in directory of source code file.
 - Open *Visual Studio Code* in directory of source code file.
-- Press *F5* to run
+- Press `F5` to run
 
 
 ## Known Issues
