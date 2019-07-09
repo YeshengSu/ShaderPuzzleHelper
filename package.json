@@ -1,8 +1,9 @@
 {
-	"name": "shaderpuzzlehelper",
+	"name": "shader-puzzle-helper",
 	"displayName": "ShaderPuzzleHelper",
 	"description": "shader puzzle tool ",
 	"version": "0.0.1",
+	"publisher": "YeshengSu",
 	"engines": {
 		"vscode": "^1.36.0"
 	},

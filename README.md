@@ -8,7 +8,15 @@ Describe specific features of your extension including screenshots of your exten
 
 For example if there is an image subfolder under your extension project workspace:
 
-\!\[feature X\]\(images/feature-x.png\)
+![HighLighting](images/HighLighting.gif)
+
+![Snippets](images/Snippets.gif)
+
+![Function Tips](images/FunctionTips.gif)
+
+![Global Proporties](images/GlobalProporties.gif)
+
+![Find Definition](images/FindDefinition.gif)
 
 > Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
 
