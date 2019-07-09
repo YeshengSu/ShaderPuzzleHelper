@@ -1,18 +1,25 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import {ContentItem, ContentManager} from './ContentManager';
+import {ContentItem, ContentManager, contentMgr} from './ShaderPuzzleContentManager';
 
 export class CreateViews {
 	constructor(context: vscode.ExtensionContext) {
+
 		var globalViewDataProvider = new GlobalViewDataProvider();
 		const view = vscode.window.createTreeView('GlobalView', { treeDataProvider: globalViewDataProvider, showCollapseAll: true });
-		vscode.commands.registerCommand('extension.GlobalView.refreshTree', async () => {globalViewDataProvider.RefreshTree();});
+
+		// select tree item
+		vscode.commands.registerCommand('extension.GlobalView.Reveal', async (key:string) => {
+			if (key) {
+				await view.reveal(key , { focus: true, select: false, expand: true });
+			}
+		});
+
+		// refresh Tree
+		vscode.commands.registerCommand('extension.GlobalView.RefreshTree', async () => {globalViewDataProvider.RefreshTree();});
 		// select a tree node
 		vscode.commands.registerCommand('extension.GlobalView.Selection', (line:number, length:number) => globalViewDataProvider.SelectItem(line, length));
-		// emit when focus on a new file
-		vscode.window.onDidChangeActiveTextEditor(() => globalViewDataProvider.ActiveEditorChanged());
-		// when the text has been changed
-		vscode.workspace.onDidChangeTextDocument(e => globalViewDataProvider.DocumentChanged(e));
+
 	}
 }
 
@@ -20,21 +27,16 @@ export class GlobalViewDataProvider implements vscode.TreeDataProvider<string>{
 	private _onDidChangeTreeData: vscode.EventEmitter<string | undefined> = new vscode.EventEmitter<string | undefined>();
 	readonly onDidChangeTreeData: vscode.Event<string  | undefined> = this._onDidChangeTreeData.event;
 	private editor: vscode.TextEditor | undefined;
-	contentMgr: ContentManager;
-	data_type = ['attribute', 'varying', 'uniform', 'macro', 'function'];
 
 	constructor() {
 		vscode.commands.executeCommand('setContext', 'GlobalProportiesEnabled', true);
 		this.editor = vscode.window.activeTextEditor;
-		this.contentMgr = new ContentManager(this.data_type);
-		this.contentMgr.UpdateContent();
 	}
 
 
 	public async RefreshTree(offset?: string): Promise<void> {
 		console.log('refresh Tree');
 		this.editor = vscode.window.activeTextEditor;
-		await this.contentMgr.UpdateContent();
 		if (offset){
 			this._onDidChangeTreeData.fire(offset);
 		}
@@ -42,26 +44,6 @@ export class GlobalViewDataProvider implements vscode.TreeDataProvider<string>{
 			this._onDidChangeTreeData.fire();
 		}
 	}
-
-	public ActiveEditorChanged(): void{
-		if (vscode.window.activeTextEditor) {
-			if (vscode.window.activeTextEditor.document.uri.scheme === 'file') {
-				const enabled = vscode.window.activeTextEditor.document.languageId === 'spzs';
-				vscode.commands.executeCommand('setContext', 'GlobalProportiesEnabled', enabled);
-				if (enabled) {
-					this.RefreshTree();
-				}
-			}
-		} else {
-			vscode.commands.executeCommand('setContext', 'GlobalProportiesEnabled', false);
-		}
-	}
-
-	public DocumentChanged(changeEvent: vscode.TextDocumentChangeEvent): void {
-		if (this.editor && changeEvent.document.uri.toString() === this.editor.document.uri.toString()) {
-			this.RefreshTree();
-		}
-	} 
 
 	public SelectItem(line:number, length: number){
 		let editor = this.editor;
@@ -74,7 +56,7 @@ export class GlobalViewDataProvider implements vscode.TreeDataProvider<string>{
 	}
 
 	public getTreeItem(element: string ): vscode.TreeItem {
-		let treeData = this.contentMgr.GetTreeData();
+		let treeData = contentMgr.GetTreeData();
 		// when element is type data node
 		if (element in treeData)
 		{
@@ -85,23 +67,28 @@ export class GlobalViewDataProvider implements vscode.TreeDataProvider<string>{
 		// when element is line data node
 		else
 		{
-			let lineData = this.contentMgr.GetLineData(element);
-			let type = lineData.type;
-			let label = lineData.proporty;
-			let content = lineData.lineText;
-			let lineNum = lineData.lineNum;
-			let collapsible = vscode.TreeItemCollapsibleState.None;
-			let command = {
-				command: 'extension.GlobalView.Selection',
-				title:'',
-				arguments: [lineNum, lineData.lineRawText.length]
-			};
-			return new GlobalViewTreeItem(lineNum, label, content, collapsible, type, command);
+			let lineData = contentMgr.GetLineData(element);
+			if (lineData){
+				let type = lineData.type;
+				let label = lineData.proporty;
+				let content = lineData.lineText;
+				let lineNum = lineData.lineNum;
+				let collapsible = vscode.TreeItemCollapsibleState.None;
+				let command = {
+					command: 'extension.GlobalView.Selection',
+					title:'',
+					arguments: [lineNum, lineData.lineRawText.length]
+				};
+				return new GlobalViewTreeItem(lineNum, label, content, collapsible, type, command);
+			}
+			else{
+				return new vscode.TreeItem("Null");
+			}
 		}
 	}
 
 	public getChildren(element: string ): string [] {
-		let treeData = this.contentMgr.GetTreeData();
+		let treeData = contentMgr.GetTreeData();
 		if (element){
 			if (element in treeData){
 				// line data node (i.e. uniform position)
@@ -117,6 +104,12 @@ export class GlobalViewDataProvider implements vscode.TreeDataProvider<string>{
 		}
 	}
 
+	public getParent(element: string): string|undefined{
+		let item = contentMgr.GetLineData(element);
+		if (item){
+			return item.type;
+		}
+	}
 }
 
 class GlobalViewTreeItem extends vscode.TreeItem{

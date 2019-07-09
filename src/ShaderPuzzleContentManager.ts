@@ -2,6 +2,21 @@ import * as vscode from 'vscode';
 import {spzsTypeTable} from './Spzs/SpzsTypeTable';
 import {spzsCtrlTable} from './Spzs/SpzsCtrlTable';
 
+export var contentMgr: ContentManager;
+export var data_type = ['attribute', 'varying', 'uniform', 'macro', 'function'];
+
+export class CreateContentManager {
+	constructor(context: vscode.ExtensionContext) {
+		contentMgr = new ContentManager(data_type);
+		contentMgr.ActiveEditorChanged();
+
+		// emit when focus on a new file
+		vscode.window.onDidChangeActiveTextEditor(() => contentMgr.ActiveEditorChanged());
+		// when the text has been changed
+		vscode.workspace.onDidChangeTextDocument(e => contentMgr.DocumentChanged(e));
+	}
+}
+
 // tree item for global proporties views
 export class ContentItem{
 	constructor(public type:string, public proporty:string, public lineText:string, public lineNum:number, public lineRawText:string){
@@ -25,9 +40,22 @@ export class ContentManager{
 		return this.treeData;
 	}
 
-	public GetLineData(line: string):ContentItem
+	public GetLineData(line: string):ContentItem|undefined
 	{
-		return (this.lineData as any)[line];
+		if (line in this.lineData)
+			return (this.lineData as any)[line];
+	}
+
+	public GetWordProportyLocation(word: string):vscode.Position|undefined
+	{
+		for (const iterator in this.lineData) {
+			let item = (this.lineData as any)[iterator];
+			if (item.proporty === word)
+			{
+				return new vscode.Position(item.lineNum, item.lineRawText.length);
+			}
+		}
+		return undefined;
 	}
 
 	public ResetData()
@@ -104,4 +132,30 @@ export class ContentManager{
 			}
 		}
 	}
+
+	public async ActiveEditorChanged(){
+		if (vscode.window.activeTextEditor) {
+			if (vscode.window.activeTextEditor.document.uri.scheme === 'file') {
+				const enabled = vscode.window.activeTextEditor.document.languageId === 'spzs';
+				vscode.commands.executeCommand('setContext', 'GlobalProportiesEnabled', enabled);
+				if (enabled) {
+					await this.UpdateContent();
+					vscode.commands.executeCommand('extension.GlobalView.RefreshTree');
+				}
+				else{
+					contentMgr.ResetData()
+				}
+			}
+		} else {
+			vscode.commands.executeCommand('setContext', 'GlobalProportiesEnabled', false);
+		}
+	}
+
+	public async DocumentChanged(changeEvent: vscode.TextDocumentChangeEvent){
+		if (this.editor && changeEvent.document.uri.toString() === this.editor.document.uri.toString()) {
+			await this.UpdateContent();
+			vscode.commands.executeCommand('extension.GlobalView.RefreshTree');
+		}
+	} 
+
 }

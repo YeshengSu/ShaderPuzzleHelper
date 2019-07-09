@@ -5,6 +5,7 @@ export var spzsTypeTable: IEntries = {
     sampler1d: {description: "sampler1d",},
     sampler3d: {description: "sampler3d",},
     samplercube: {description: "samplercube",},
+    samplershadow: {description: "samplershadow",},
     lowp: {description: "lowp",},
     mediump: {description: "mediump",},
     highp: {description: "highp",},
