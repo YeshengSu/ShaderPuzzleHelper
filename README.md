@@ -26,8 +26,12 @@ Describe specific features of this extension.
 ## Requirements
 
 ### Install Extension
-- first ...
-- second ...
+- Download *shader-puzzle-helper-0.0.1.vsix*
+- Open *Visual Studio Code*
+- Select Install From VSIX
+![Install1](images/Install1.png.png)
+- Select *shader-puzzle-helper-0.0.1.vsix*
+![Install1](images/Install2.png.png)
 
 ### Compile Source Code
 - Install *Visual Studio Code*
