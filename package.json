@@ -7,7 +7,7 @@
 		"color": "#C80000",
 		"theme": "dark"
 	},
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"publisher": "YeshengSu",
 	"engines": {
 		"vscode": "^1.36.0"

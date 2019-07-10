@@ -34,7 +34,7 @@
 	"macro definition": {
 		"prefix": "macro def",
 		"body": [
-			"macro(\"${1:}\")",
+			"macro(${1:})",
 			"<",
 			"	",
 			">;"
@@ -56,7 +56,7 @@
 	"macro": {
 		"prefix": "macro",
 		"body": [
-			"macro(\"${1:}\") out(float ${2:var}) {",
+			"macro(${1:}) out(float ${2:var}) {",
 			"	",
 			"	branch (\"${3:}\") {",
 			"	",
