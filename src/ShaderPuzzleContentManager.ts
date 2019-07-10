@@ -43,7 +43,9 @@ export class ContentManager{
 	public GetLineData(line: string):ContentItem|undefined
 	{
 		if (line in this.lineData)
+		{
 			return (this.lineData as any)[line];
+		}
 	}
 
 	public GetWordProportyLocation(word: string):vscode.Position|undefined
@@ -140,10 +142,10 @@ export class ContentManager{
 				vscode.commands.executeCommand('setContext', 'GlobalProportiesEnabled', enabled);
 				if (enabled) {
 					await this.UpdateContent();
-					vscode.commands.executeCommand('extension.GlobalView.RefreshTree');
+					vscode.commands.executeCommand('extension.ContentManager.Refresh');
 				}
 				else{
-					contentMgr.ResetData()
+					contentMgr.ResetData();
 				}
 			}
 		} else {
@@ -154,7 +156,7 @@ export class ContentManager{
 	public async DocumentChanged(changeEvent: vscode.TextDocumentChangeEvent){
 		if (this.editor && changeEvent.document.uri.toString() === this.editor.document.uri.toString()) {
 			await this.UpdateContent();
-			vscode.commands.executeCommand('extension.GlobalView.RefreshTree');
+			vscode.commands.executeCommand('extension.ContentManager.Refresh');
 		}
 	} 
 

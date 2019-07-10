@@ -11,12 +11,14 @@ export class CreateViews {
 		// select tree item
 		vscode.commands.registerCommand('extension.GlobalView.Reveal', async (key:string) => {
 			if (key) {
-				await view.reveal(key , { focus: true, select: false, expand: true });
+				await view.reveal(key , { focus: false, select: true, expand: true });
 			}
 		});
 
 		// refresh Tree
+		vscode.commands.registerCommand('extension.ContentManager.Refresh', async () => {globalViewDataProvider.RefreshTree();});
 		vscode.commands.registerCommand('extension.GlobalView.RefreshTree', async () => {globalViewDataProvider.RefreshTree();});
+
 		// select a tree node
 		vscode.commands.registerCommand('extension.GlobalView.Selection', (line:number, length:number) => globalViewDataProvider.SelectItem(line, length));
 
