@@ -67,13 +67,21 @@
 		"description": "macro"
 	},
 
-	"function": {
-		"prefix": "function",
+	"function def": {
+		"prefix": "function def",
 		"body": [
 			"function ${1} in(float ${2:parm}) out(float ${3:output}) {",
 			"	",
 			"	out(${3:output}, ${2:parm});",
 			"};"
+		],
+		"description": "function"
+	},
+
+	"function": {
+		"prefix": "function",
+		"body": [
+			"function ${1}() out();"
 		],
 		"description": "function"
 	},
