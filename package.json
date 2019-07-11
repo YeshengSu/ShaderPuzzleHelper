@@ -7,7 +7,7 @@
 		"color": "#C80000",
 		"theme": "dark"
 	},
-	"version": "1.0.5",
+	"version": "1.0.6",
 	"publisher": "YeshengSu",
 	"engines": {
 		"vscode": "^1.36.0"
@@ -51,33 +51,55 @@
 				"title": "Get Current File Path"
 			},
 			{
-				"command": "extension.OpenShaderPuzzleWeb",
-				"title": "Shader Puzzle Web"
-			},
-			{
-				"command": "extension.Compilation.Compile",
-				"title": "Shader Puzzle Compile"
-			},
-			{
 				"command": "extension.GlobalView.RefreshTree",
 				"title": "Refresh Global Tree",
 				"icon": {
 					"light": "images/resources/light/refresh.svg",
 					"dark": "images/resources/dark/refresh.svg"
 				}
+			},
+			{
+				"command": "extension.OpenShaderPuzzleWeb",
+				"title": "Shader Puzzle Web",
+				"icon": {
+					"light": "images/resources/light/link.png",
+					"dark": "images/resources/dark/link.png"
+				}
+			},
+			{
+				"command": "extension.Compilation.Compile",
+				"title": "Compile Shader Puzzle",
+				"icon": {
+					"light": "images/resources/light/run.png",
+					"dark": "images/resources/dark/run.png"
+				}
+			},
+			{
+				"command": "extension.Compilation.SetCompiler",
+				"title": "Set Shader Puzzle Compiler"
 			}
 		],
 		"menus": {
 			"editor/context": [
 				{
-					"when": "editorFocus",
 					"command": "extension.GetCurrentFilePath",
+					"when": "editorFocus",
+					"group": "navigation"
+				},
+				{
+					"command": "extension.Compilation.Compile",
+					"when": "ShaderPuzzleEnabled&&editorFocus",
 					"group": "navigation"
 				}
 			],
 			"explorer/context": [
 				{
 					"command": "extension.GetCurrentFilePath",
+					"group": "navigation"
+				},
+				{
+					"command": "extension.Compilation.Compile",
+					"when": "ShaderPuzzleEnabled",
 					"group": "navigation"
 				}
 			],
@@ -88,7 +110,13 @@
 				},
 				{
 					"command": "extension.Compilation.Compile",
+					"when": "ShaderPuzzleEnabled",
 					"group": "navigation"
+				},
+				{
+					"command": "extension.Compilation.SetCompiler",
+					"when": "ShaderPuzzleEnabled",
+					"group": "z_commands"
 				}
 			],
 			"view/title": [
@@ -113,7 +141,7 @@
 				{
 					"id": "GlobalView",
 					"name": "Global Proporties",
-					"when": "GlobalProportiesEnabled"
+					"when": "ShaderPuzzleEnabled"
 				},
 				{
 					"id": "LocalView",

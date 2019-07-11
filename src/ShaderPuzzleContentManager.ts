@@ -137,7 +137,7 @@ export class ContentManager{
 		if (vscode.window.activeTextEditor) {
 			if (vscode.window.activeTextEditor.document.uri.scheme === 'file') {
 				const enabled = vscode.window.activeTextEditor.document.languageId === 'spzs';
-				vscode.commands.executeCommand('setContext', 'GlobalProportiesEnabled', enabled);
+				vscode.commands.executeCommand('setContext', 'ShaderPuzzleEnabled', enabled);
 				if (enabled) {
 					await this.UpdateContent();
 					vscode.commands.executeCommand('extension.ContentManager.Refresh');
@@ -147,7 +147,7 @@ export class ContentManager{
 				}
 			}
 		} else {
-			vscode.commands.executeCommand('setContext', 'GlobalProportiesEnabled', false);
+			vscode.commands.executeCommand('setContext', 'ShaderPuzzleEnabled', false);
 		}
 	}
 

@@ -29,7 +29,7 @@ export class GlobalViewDataProvider implements vscode.TreeDataProvider<string>{
 	private editor: vscode.TextEditor | undefined;
 
 	constructor() {
-		vscode.commands.executeCommand('setContext', 'GlobalProportiesEnabled', true);
+		vscode.commands.executeCommand('setContext', 'ShaderPuzzleEnabled', true);
 		this.editor = vscode.window.activeTextEditor;
 	}
 

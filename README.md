@@ -1,7 +1,7 @@
 # Shader Puzzle Helper
 
 ## Description
-This is your extension "ShaderPuzzleHelper" capable of highlighting, code snippet, function tip, global proporties search, find definition of words.
+This is your extension "ShaderPuzzleHelper" capable of highlighting, code snippet, function tip, global proporties search, find definition of words and Compile.
 Increasing productivity of writing shade puzzle.
 
 ## Features
@@ -22,6 +22,9 @@ Describe specific features of this extension.
 ### Find Definition
 ![Find Definition](images/FindDefinition.gif)
 > Tip: Press [Ctrl] to check the definition of the word whom cursor point to.
+
+### Compile
+![Compile](images/Compiling.gif)
 
 ## Requirements
 
