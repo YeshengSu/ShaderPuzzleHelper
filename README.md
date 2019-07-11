@@ -31,11 +31,11 @@ Describe specific features of this extension.
 * *Visual Studio Code v1.17.0*
 
 ### Install Extension
-- Download [shader-puzzle-helper-0.0.5.vsix](https://github.com/YeshengSu/ShaderPuzzleHelper/raw/master/shader-puzzle-helper-1.0.5.vsix)
+- Download [shader-puzzle-helper-1.0.6.vsix](https://github.com/YeshengSu/ShaderPuzzleHelper/raw/master/shader-puzzle-helper-1.0.6.vsix)
 - Open *Visual Studio Code*
 - Select Install From VSIX
 ![Install1](images/Install1.png)
-- Select *shader-puzzle-helper-0.0.1.vsix*
+- Select *shader-puzzle-helper-1.0.6.vsix*
 ![Install2](images/Install2.png)
 
 ### Compile Source Code
