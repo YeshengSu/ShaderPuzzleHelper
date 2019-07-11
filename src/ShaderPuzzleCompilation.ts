@@ -13,6 +13,9 @@ export var CreateCompilation = function(context: vscode.ExtensionContext){
     compiler = memento.get('compiler', undefined);
     compiler_folder = memento.get('compiler_folder', undefined);
 
+    // create terminal
+    terminal = vscode.window.createTerminal(`Ext Terminal #Shader Puzzle Compiler`);
+
     context.subscriptions.push(vscode.commands.registerCommand('extension.Compilation.SetCompiler', async function (uri) {
         if (!uri) { return;}
 
@@ -64,9 +67,8 @@ export var CreateCompilation = function(context: vscode.ExtensionContext){
             vscode.window.showInformationMessage('shader puzzle is now compiled !');
             vscode.window.showInformationMessage(`file path ：${file_path}`);
             vscode.window.showInformationMessage(`compiler path ：${compiler_folder+compiler}`);
-
-            // create terminal
-            terminal = vscode.window.createTerminal(`Ext Terminal #Shader Puzzle Compiler`);
+            
+            // start compile
             terminal.show();
             terminal.sendText("'Start To Compiling ...'");
             terminal.sendText(`cd ${compiler_folder}`);
