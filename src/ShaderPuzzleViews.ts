@@ -2,28 +2,26 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import {ContentItem, ContentManager, contentMgr} from './ShaderPuzzleContentManager';
 
-export class CreateViews {
-	constructor(context: vscode.ExtensionContext) {
+export var CreateViews = function(context: vscode.ExtensionContext) {
 
-		var globalViewDataProvider = new GlobalViewDataProvider();
-		const view = vscode.window.createTreeView('GlobalView', { treeDataProvider: globalViewDataProvider, showCollapseAll: true });
+	var globalViewDataProvider = new GlobalViewDataProvider();
+	const view = vscode.window.createTreeView('GlobalView', { treeDataProvider: globalViewDataProvider, showCollapseAll: true });
 
-		// select tree item
-		vscode.commands.registerCommand('extension.GlobalView.Reveal', async (key:string) => {
-			if (key) {
-				await view.reveal(key , { focus: false, select: true, expand: true });
-			}
-		});
+	// select tree item
+	vscode.commands.registerCommand('extension.GlobalView.Reveal', async (key:string) => {
+		if (key) {
+			await view.reveal(key , { focus: false, select: true, expand: true });
+		}
+	});
 
-		// refresh Tree
-		vscode.commands.registerCommand('extension.ContentManager.Refresh', async () => {globalViewDataProvider.RefreshTree();});
-		vscode.commands.registerCommand('extension.GlobalView.RefreshTree', async () => {globalViewDataProvider.RefreshTree();});
+	// refresh Tree
+	vscode.commands.registerCommand('extension.ContentManager.Refresh', async () => {globalViewDataProvider.RefreshTree();});
+	vscode.commands.registerCommand('extension.GlobalView.RefreshTree', async () => {globalViewDataProvider.RefreshTree();});
 
-		// select a tree node
-		vscode.commands.registerCommand('extension.GlobalView.Selection', (line:number, length:number) => globalViewDataProvider.SelectItem(line, length));
+	// select a tree node
+	vscode.commands.registerCommand('extension.GlobalView.Selection', (line:number, length:number) => globalViewDataProvider.SelectItem(line, length));
 
-	}
-}
+};
 
 export class GlobalViewDataProvider implements vscode.TreeDataProvider<string>{
 	private _onDidChangeTreeData: vscode.EventEmitter<string | undefined> = new vscode.EventEmitter<string | undefined>();

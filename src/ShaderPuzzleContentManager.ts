@@ -5,17 +5,15 @@ import {spzsCtrlTable} from './Spzs/SpzsCtrlTable';
 export var contentMgr: ContentManager;
 export var data_type = ['attribute', 'varying', 'uniform', 'macro', 'function'];
 
-export class CreateContentManager {
-	constructor(context: vscode.ExtensionContext) {
-		contentMgr = new ContentManager(data_type);
-		contentMgr.ActiveEditorChanged();
+export var CreateContentManager = function(context: vscode.ExtensionContext) {
+	contentMgr = new ContentManager(data_type);
+	contentMgr.ActiveEditorChanged();
 
-		// emit when focus on a new file
-		vscode.window.onDidChangeActiveTextEditor(() => contentMgr.ActiveEditorChanged());
-		// when the text has been changed
-		vscode.workspace.onDidChangeTextDocument(e => contentMgr.DocumentChanged(e));
-	}
-}
+	// emit when focus on a new file
+	vscode.window.onDidChangeActiveTextEditor(() => contentMgr.ActiveEditorChanged());
+	// when the text has been changed
+	vscode.workspace.onDidChangeTextDocument(e => contentMgr.DocumentChanged(e));
+};
 
 // tree item for global proporties views
 export class ContentItem{
